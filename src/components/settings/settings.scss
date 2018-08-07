@@ -2,15 +2,10 @@
 
 .component-settings {
     background: none;
-
-    // A bit more specific selector to keep the tab space at the top a bit dense.
-    &.panel-content-container.panel-content {
-        padding-top: 0;
-    }
+    width: 100%;
 
     .soundmeter {
-        border: 1px solid $grey-color-light;
-        height: $spacer * 1.5;
+        border: 1px solid $grey-color-lightest;
     }
 
     // The switch is disabled, but use more opacity to indicate

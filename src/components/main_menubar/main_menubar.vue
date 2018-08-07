@@ -21,4 +21,6 @@
             <icon :name="module.menubarIcon"/>
         </div>
     </div>
+
+    &nbsp;
 </component>

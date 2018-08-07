@@ -301,7 +301,9 @@ class Helpers {
             const b = browserify({
                 basedir: path.join(__dirname, '..'),
                 detectGlobals: false,
-                paths: ['../node_modules', '../src/js/'],
+                paths: [
+                    '../', // Resolve vialer-js require.
+                ],
             })
 
             for (const moduleName of Object.keys(sectionModules)) {

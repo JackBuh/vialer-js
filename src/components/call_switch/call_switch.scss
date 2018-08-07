@@ -6,6 +6,7 @@
 // icon-links to several locations.
 .component-call-switch {
     background: $white-tint-color-light;
+    width: $spacer * 5;
 
     .call {
         @include icon-size($spacer * 5);

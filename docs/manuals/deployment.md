@@ -1,19 +1,24 @@
 ## Release process
-The Vialer-js deploy process makes a distinction between a beta release and
-a public release. The beta version and the public version are two separate
-(Firefox/Chrome) store entries. Semver (x.x.x) is used with the following
-disinctions:
+The Vialer-js deploy process knows alpha, beta and production release channels.
+Each channel has its own separate Firefox/Chrome store entry. A release will
+always be targetting the alpha channel first, so our bleeding-edge users
+can verify in a week that the release works as expected. An alpha release will
+always be a MINOR or a MAJOR semver version bump. Suppose the current public
+version is `4.0.0`. Then the next alpha release will either be `4.1.0` or
+`5.0.0`, depending on the nature of the changes. Basically the following applies:
 
-* MAJOR version when you make incompatible API changes
-* MINOR version when you add functionality in a backwards-compatible manner
-* PATCH version when you make backwards-compatible bug fixes.
+* MAJOR when an incompatible API change influences (external) modules
+* MINOR when new functionality is added in a backwards-compatible manner
 
-Suppose the current public version is `2.3.4`. Then the next (patch) public
-release will be `2.3.5`. We first deploy a beta release with a postfix deploy
-number on the current version, e.g. `2.3.4.0`. The beta release could proof to
-be unsuccessful during a one-week blackbox testing period. In that case, a
-new beta version `2.3.4.1` is published, until we are convinced that the
-release is stable. The public release is then done as `2.3.5`.
+Semver PATCH versions are bumped while the alpha version needs to be updated,
+due to unencounted bugs or inconsistencies. So, `4.1.0` becomes `4.1.1`, `4.1.2`,
+or `5.0.0` becomes `5.0.1`, `5.0.2`, etc., depending on the amount of bugfix
+releases needed.
+
+When the alpa testusers report a succesful release after a week, we proceed by
+publishing the beta version to our larger testusers pool in the beta channel.
+Then after a week again, when our beta testusers didn't encounter any problems,
+we proceed by publish the production version to our main users.
 
 
 ## Preparation
@@ -39,7 +44,7 @@ To be able to push to npm, an authorized developer first have to login to the
 npm login
 ```
 
-Checkout {@tutorial branding}) if you want to be able to deploy multiple brands
+Checkout {@tutorial branding} if you want to be able to deploy multiple brands
 at once. Make sure you distinguish between the correct `extensionId/extensionId_beta`
 and `id/id_beta` in `.vialerjs-rc`.
 

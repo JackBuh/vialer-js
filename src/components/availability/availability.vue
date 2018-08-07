@@ -1,4 +1,4 @@
-<component class="component-availability panel-content">
+<component class="component-availability padded">
     <h1 class="uc">{{$t('availability options')}}</h1>
 
     <Field name="dnd_availability" type="checkbox"

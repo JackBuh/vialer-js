@@ -2,6 +2,7 @@
 @import "vialer-js/lib/variables";
 
 .component-activity {
+    width: 100%;
 
     .tabs-squeezed {
         margin: 0 $spacer * 9;
@@ -54,14 +55,22 @@
         }
 
         .activity-info {
+            display: flex;
             flex: 1;
+            flex-direction: column;
+            // Required to have ellipsis text overflow on .name.
+            min-width: 0;
 
-            header {
+            .name {
                 color: $grey-color-darkest;
                 font-weight: 500;
+                margin-right: $spacer * 2;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
 
-            footer {
+            .description {
                 color: $grey-color;
                 font-size: 0.8rem;
             }

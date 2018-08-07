@@ -2,6 +2,8 @@
 @import "vialer-js/lib/variables";
 
 .component-login {
+    padding: $spacer * 4;
+
     header {
         text-align: center;
         width: 100%;

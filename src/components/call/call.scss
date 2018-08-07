@@ -2,21 +2,18 @@
 @import "vialer-js/lib/variables";
 
 .component-call {
-    align-items: center;
     color: $primary-color;
     display: flex;
+    flex: 1;
     flex-direction: column;
-    flex-grow: 3;
-    justify-content: space-between;
     min-height: 350px;
     padding: $spacer * 3;
-    padding-bottom: $spacer;
+    padding-bottom: 0;
+
 
     .call-info {
-        align-self: flex-start;
         font-weight: 400;
         text-align: center;
-        width: 100%;
 
         .contact-avatar {
             @include icon-size($spacer * 10);
@@ -48,13 +45,11 @@
     }
 
     .call-options {
-        align-items: center;
         display: flex;
         flex-direction: row;
         justify-content: center;
         margin-top: $spacer * 3;
         padding: 0 ($spacer * 5);
-        width: 100%;
 
         .rounded-button-with-text {
             padding: $spacer * 0.75;
@@ -136,7 +131,6 @@
         align-items: center;
         display: flex;
         flex-direction: column;
-        width: 100%;
 
         .transfer-buttons {
             display: flex;

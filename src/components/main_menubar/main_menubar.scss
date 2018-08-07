@@ -3,13 +3,10 @@
 
 .component-main-menubar {
     background: $brand-color;
-    display: flex;
-    flex: 1 0 $spacer * 5;
-    flex-direction: column;
-    text-align: center;
 
     .options {
-        position: fixed;
+        // Keeps the menubar icons from scrolling with the main content.
+
         width: $spacer * 5;
 
         .option {
@@ -19,7 +16,7 @@
             flex-direction: column;
             height: $spacer * 7;
             justify-content: center;
-            transition: all 200ms ease-in-out;
+            transition: background 150ms ease-in-out;
 
             svg {
                 @include icon-size($spacer * 3);

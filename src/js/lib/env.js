@@ -64,6 +64,10 @@ function env({role}) {
         else if (navigator.platform.match(/(Mac)/i)) _env.isMacOS = true
         else if (navigator.platform.match(/(Windows|Win32)/i)) _env.isWindows = true
         if (_env.role.fg) {
+            if (location.search.includes('test=true')) {
+                $('html').classList.add('test')
+            }
+
             if (location.search.includes('popout=true')) {
                 _env.isPopout = true
                 $('html').classList.add('popout')
@@ -95,15 +99,23 @@ function env({role}) {
             $('html').classList.add('electron')
             // In Electron, a different IPC mechanism is used to set
             // the window height from the main script.
-            electron.ipcRenderer.send('resize-window', {
-                height: document.body.clientHeight,
-                width: document.body.clientWidth,
-            })
 
-            resizeSensor(document.body, (e) => {
+            document.addEventListener('DOMContentLoaded', function(event) {
                 electron.ipcRenderer.send('resize-window', {
                     height: document.body.clientHeight,
                     width: document.body.clientWidth,
+                })
+
+                electron.ipcRenderer.on('resize-window-done', () => {
+                    document.body.style.opacity = 1
+                })
+
+                resizeSensor(document.body, (e) => {
+                    document.body.style.opacity = 0.5
+                    electron.ipcRenderer.send('resize-window', {
+                        height: document.body.clientHeight,
+                        width: document.body.clientWidth,
+                    })
                 })
             })
         }

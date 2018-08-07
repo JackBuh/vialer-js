@@ -5,15 +5,14 @@
     // Push the soundmeter to the bottom.
     display: flex;
     flex-direction: column;
-    // justify-content: space-between;
+
+    .calls-container {
+        display: flex;
+        flex-direction: row;
+    }
 
     &.call-ongoing {
         background: $white-tint-color-dark;
-
-        .calls-container {
-            display: grid;
-            grid-template-columns: auto ($spacer * 5);
-        }
     }
 
     .disabled-placeholder {
@@ -48,14 +47,4 @@
         }
     }
 
-
-    .soundmeter {
-        align-items: center;
-        background: $white-tint-color-light;
-        display: flex;
-        height: $spacer * 1.5;
-        justify-content: center;
-        position: relative;
-        width: 100%;
-    }
 }

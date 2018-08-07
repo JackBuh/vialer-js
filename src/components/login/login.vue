@@ -59,7 +59,7 @@
 
     <!-- Unlocking a selected session..-->
     <div v-else-if="app.session.active && app.session.active !== 'new'">
-
+        <!-- Do not publish browser test screenshots without a password field. This would leak test credentials. -->
         <Field name="password" type="password"
             :label="$t('password')" :model.sync="password"
             :placeholder="$t('enter your password')"

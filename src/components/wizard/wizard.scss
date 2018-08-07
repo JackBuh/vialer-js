@@ -2,12 +2,12 @@
 @import "vialer-js/lib/variables";
 
 .component-wizard {
+    padding: $spacer * 4;
 
     .step {
         align-items: center;
         display: flex;
         flex-direction: column;
-        padding: $spacer * 4;
         text-align: center;
 
         > header {

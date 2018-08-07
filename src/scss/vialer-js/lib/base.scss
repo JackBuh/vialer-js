@@ -11,6 +11,18 @@ body {
     }
 }
 
+// Animations get in the way while running browser tests
+// and while taking documentation screenshots, so we
+// forcefully suppress them when a testrunner is using
+// the application.
+html {
+    &.test {
+        * {
+            transition: none !important; // sass-lint:disable-line no-important
+        }
+    }
+}
+
 body {
     color: $primary-color;
 
