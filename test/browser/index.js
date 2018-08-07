@@ -74,10 +74,10 @@ test('[browser] <alice> I am logging in.', async(t) => {
     let alice = browserAlice.pages[0]
     let bob = browserBob.pages[0]
 
-    if (!settings.tests.headless) {
-        alice.setViewport({height: 600, width: 500})
-        bob.setViewport({height: 600, width: 500})
-    }
+
+    alice.setViewport({height: 600, width: 500})
+    bob.setViewport({height: 600, width: 500})
+
 
     const uri = `${settings.tests.port}/${BRAND}/webview/index.html?test=true`
     await Promise.all([
@@ -133,13 +133,13 @@ test('[browser] <alice> I am logging in.', async(t) => {
 
             test('[browser] <bob> alice is calling; let\'s talk.', async(___t) => {
                 await bob.waitFor('.component-calls .call-ongoing')
-                await bob.screenshot({path: path.join(settings.tests.screenshots, `${settings.tests.step(alice)}calldialog-incoming.png`)})
+                await bob.screenshot({path: path.join(settings.tests.screenshots, `${settings.tests.step(bob)}calldialog-incoming.png`)})
                 await bob.click('.component-call .test-button-accept')
                 // Alice and bob are now getting connected;
                 // wait for Alice to see the connected screen.
                 await alice.waitFor('.component-call .call-options')
                 if (SCREENS) await alice.screenshot({path: path.join(settings.tests.screenshots, `${settings.tests.step(alice)}calldialog-outgoing-accepted.png`)})
-                if (SCREENS) await bob.screenshot({path: path.join(settings.tests.screenshots, `${settings.tests.step(alice)}calldialog-incoming-accepted.png`)})
+                if (SCREENS) await bob.screenshot({path: path.join(settings.tests.screenshots, `${settings.tests.step(bob)}calldialog-incoming-accepted.png`)})
 
                 await browserAlice.browser.close()
                 await browserBob.browser.close()
