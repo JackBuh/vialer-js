@@ -20,6 +20,8 @@ jobs:
       - run: npm install
 
       - save_cache:
+          paths:
+            - node_modulesz
           key: v1-dependencies-{{ checksum "package.json" }}
 
       - run: cp .vialer-jsrc.example .vialer-jsrc
