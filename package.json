@@ -96,7 +96,7 @@
         "bulma": "0.6.x",
         "bulma-switch": "0.1.x",
         "css-element-queries": "0.4.x",
-        "electron": "3.0.0-beta.4",
+        "electron": "^3.0.0-beta.4",
         "electron-reload": "1.x.x",
         "eventemitter3": "2.x.x",
         "puppeteer": "1.x.x",
