@@ -118,6 +118,6 @@
         "webextension-polyfill": "0.2.x"
     },
     "_moduleAliases": {
-        "vialer-js": "./"
+        "vialer-js": "./src/js"
     }
 }

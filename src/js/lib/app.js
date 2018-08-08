@@ -1,3 +1,5 @@
+require('module-alias/register')
+
 const Media = require('./media')
 const Skeleton = require('./skeleton')
 const Sounds = require('./sounds')

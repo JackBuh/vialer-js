@@ -541,7 +541,6 @@ if (options.env.isBrowser) {
         global.bgOptions = options
     }
 } else {
-    // Help modules find the vialer-js alias.
-    require('module-alias/register')
+    // Help modules find the vialer-js module alias from package.json
     module.exports = {AppBackground, options}
 }

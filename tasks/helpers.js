@@ -1,6 +1,7 @@
 /** @memberof Gulp */
 const {_extend} = require('util')
 
+const aliasify = require('aliasify')
 const browserify = require('browserify')
 const buffer = require('vinyl-buffer')
 const childExec = require('child_process').exec
@@ -30,6 +31,7 @@ const serveStatic = require('serve-static')
 const size = require('gulp-size')
 const source = require('vinyl-source-stream')
 const sourcemaps = require('gulp-sourcemaps')
+const through = require('through2')
 const watchify = require('watchify')
 
 // Browserify instance caching.
@@ -237,6 +239,8 @@ class Helpers {
             BUNDLERS[bundleName].ignore('buffer')
             BUNDLERS[bundleName].ignore('process')
             BUNDLERS[bundleName].ignore('rc')
+            BUNDLERS[bundleName].ignore('module-alias/register')
+
             // Exclude the webextension polyfill from non-webextension builds.
             if (bundleName === 'webview') {
                 BUNDLERS[bundleName].ignore('webextension-polyfill')
@@ -297,14 +301,9 @@ class Helpers {
     * @returns {Promise} - Resolves when all modules are processed.
     */
     jsModules(brandName, buildType, sectionModules, appSection) {
+
         return new Promise((resolve) => {
-            const b = browserify({
-                basedir: path.join(__dirname, '..'),
-                detectGlobals: false,
-                paths: [
-                    '../', // Resolve vialer-js require.
-                ],
-            })
+            let requires = []
 
             for (const moduleName of Object.keys(sectionModules)) {
                 const sectionModule = sectionModules[moduleName]
@@ -313,13 +312,11 @@ class Helpers {
                 if (['bg', 'i18n'].includes(appSection)) {
                     if (sectionModule.adapter) {
                         gutil.log(`[${appSection}] adapter ${moduleName} (${sectionModule.adapter})`)
-                        // An adapter is a simple module. Don't enforce module structure.
-                        b.require(`${sectionModule.adapter}/src/js/${appSection}`)
+                        requires.push(`${sectionModule.adapter}/src/js/${appSection}`)
                     } else if (sectionModule.providers) {
                         for (const provider of sectionModule.providers) {
                             gutil.log(`[${appSection}] provider ${moduleName} (${provider})`)
-                            // A provider is a simple JavaScript module without  Don't enforce module structure.
-                            b.require(`${provider}/src/js/${appSection}`)
+                            requires.push(`${provider}/src/js/${appSection}`)
                         }
                     }
                 }
@@ -327,16 +324,41 @@ class Helpers {
                 if (sectionModule.addons) {
                     for (const addon of sectionModule.addons[appSection]) {
                         gutil.log(`[${appSection}] addon ${moduleName} (${addon})`)
-                        b.require(`${addon}/src/js/${appSection}`)
+                        requires.push(`${addon}/src/js/${appSection}`)
                     }
                 } else if (sectionModule.name) {
                     gutil.log(`[${appSection}] custom module ${moduleName} (${sectionModule.name})`)
                     // A custom module is limited to a bg or fg section.
                     if (sectionModule.parts.includes(appSection)) {
-                        b.require(`${sectionModule.name}/src/js/${appSection}`)
+                        requires.push(`${sectionModule.name}/src/js/${appSection}`)
                     }
                 }
             }
+
+            const b = browserify({
+                basedir: path.join(__dirname, '..'),
+                debug: true,
+                detectGlobals: false,
+                paths: [
+                    '../', // Resolve vialer-js require.
+                ],
+            })
+
+
+            for (const _require of requires) {
+                b.require(_require)
+            }
+
+            // Rewrite requires in modules from something like 'vialer-js/bg/modules/user/adapter`
+            // to `vialer-js/src/js/bg/modules/user/adapter`. Within the node runtime,
+            // the same kind of aliasing is applied with module-alias. See package.json
+            // for the alias definition.
+            b.transform({global: true}, function(file, opts) {
+                return through(function(buf, enc, next) {
+                    this.push(buf.toString('utf8').replace('require(\'vialer-js/', 'require(\'vialer-js/src/js/'))
+                    next()
+                });
+            })
 
             b.bundle()
                 .on('error', notify.onError('Error: <%= error.message %>'))
