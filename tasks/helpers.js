@@ -352,9 +352,10 @@ class Helpers {
             // to `vialer-js/src/js/bg/modules/user/adapter`. Within the node runtime,
             // the same kind of aliasing is applied with module-alias. See package.json
             // for the alias definition.
+            const aliasMatch = /require\('vialer-js\//g
             b.transform({global: true}, function(file, opts) {
                 return through(function(buf, enc, next) {
-                    this.push(buf.toString('utf8').replace('require(\'vialer-js/', 'require(\'vialer-js/src/js/'))
+                    this.push(buf.toString('utf8').replace(aliasMatch, 'require(\'vialer-js/src/js/'))
                     next()
                 });
             })
