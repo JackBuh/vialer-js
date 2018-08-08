@@ -1,4 +1,4 @@
-## Release process
+# Release process
 The Vialer-js deploy process knows alpha, beta and production release channels.
 Each channel has its own separate Firefox/Chrome store entry. A release will
 always be targetting the alpha channel first, so our bleeding-edge users
@@ -21,7 +21,7 @@ Then after a week again, when our beta testusers didn't encounter any problems,
 we proceed by publish the production version to our main users.
 
 
-## Preparation
+# Preparation
 Deployment to the Firefox and Chrome store is automated. In order to deploy
 to either one, you first need to fill in API credentials in the following file:
 
@@ -48,7 +48,7 @@ Checkout {@tutorial branding} if you want to be able to deploy multiple brands
 at once. Make sure you distinguish between the correct `extensionId/extensionId_beta`
 and `id/id_beta` in `.vialerjs-rc`.
 
-## Beta release
+# Beta release
 1. Bump the version in package.json, e.g. 2.3.4.0.
 2. Tag and commit the beta release
 ```bash
@@ -61,7 +61,7 @@ git push origin master
 gulp deploy-brands --deploy beta
 ```
 
-## Public release
+# Public release
 1. Update the `CHANGELOG.md` with all the changes since the last version
 
 2. Bump the version:

@@ -1,4 +1,4 @@
-## Chrom(e/ium) WebExtension
+# Chrom(e/ium) WebExtension
 ```bash
 # Generate a develop build.
 # The used brand and target parameters are defaults and can be omitted.
@@ -15,7 +15,7 @@ You can drag-and-drop the distribution zip file from `dist/chrome`  on the
 Chrome extension page. Notice that this may not work on Chrome Windows.
 
 
-## Electron desktop app
+# Electron desktop app
 Vialer-js can run as a desktop app using Electron, although this
 version is still **experimental** and not (yet) officially supported.
 You're free to give it a spin though! It requires Electron to be installed
@@ -26,7 +26,7 @@ electron build/bologna/electron/main.js
 ```
 
 
-## Firefox WebExtension
+# Firefox WebExtension
 Firefox support is problematic at the moment, because Mozilla doesn't seem to
 make it a priority to make WebRTC applications run within a WebExtension.
 There is at least one [blocking ticket](https://bugzilla.mozilla.org/show_bug.cgi?id=1278100)
