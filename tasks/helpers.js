@@ -1,7 +1,6 @@
 /** @memberof Gulp */
 const {_extend} = require('util')
 
-const aliasify = require('aliasify')
 const browserify = require('browserify')
 const buffer = require('vinyl-buffer')
 const childExec = require('child_process').exec
