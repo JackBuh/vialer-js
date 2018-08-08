@@ -5,7 +5,7 @@ jobs:
       # specify the version you desire here
       - image: circleci/node:latest-browsers
 
-    working_directory: ~/repo
+    working_directory: ~/vialer-js
 
     steps:
       - checkout
@@ -21,7 +21,7 @@ jobs:
 
       - save_cache:
           paths:
-            - node_modulesz
+            - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
       - run: cp .vialer-jsrc.example .vialer-jsrc
