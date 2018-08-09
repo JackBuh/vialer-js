@@ -9,14 +9,20 @@ const ifElse = require('gulp-if-else')
 const livereload = require('gulp-livereload')
 const template = require('gulp-template')
 
-const Helpers = require('../tasks/helpers')
-let settings = require('../tasks/settings')
+const Helpers = require('../tools/helpers')
+let settings = require('../tools/settings')(__dirname)
+
+// Force the build target here, so we can keep the gulp helpers generic.
+settings.BUILD_TARGET = 'docs'
+
 const helpers = new Helpers(settings)
 
 
-gulp.task('code', 'Generate code documentation json.', (done) => {
-    let execCommand = `node ${settings.NODE_PATH}/jsdoc/jsdoc.js ${settings.BASE_DIR}src -c ${settings.BASE_DIR}.jsdoc.json -d ${settings.BUILD_DIR}/docs`
-    childExec(execCommand, undefined, (err, stdout, stderr) => {
+gulp.task('code', 'Generate code documentation as JSON.', (done) => {
+    const commandPart1 = `node ${settings.NODE_PATH}/jsdoc/jsdoc.js ${settings.ROOT_DIR}src`
+    const commandPart2 = `-c ${settings.ROOT_DIR}.jsdoc.json -d ${settings.BUILD_DIR}/docs`
+    const command = `${commandPart1}${commandPart2}`
+    childExec(command, undefined, (err, stdout, stderr) => {
         if (stderr) gutil.log(stderr)
         if (stdout) gutil.log(stdout)
         if (settings.LIVERELOAD) livereload.changed('rtd.js')
@@ -25,7 +31,7 @@ gulp.task('code', 'Generate code documentation json.', (done) => {
 })
 
 
-gulp.task('html', 'Preprocess and build application HTML.', () => {
+gulp.task('html', 'Generate HTML index file.', () => {
     // The index.html file is shared with the electron build target.
     // Appropriate scripts are inserted based on the build target.
     return gulp.src(path.join('src', 'index.html'))
@@ -36,18 +42,46 @@ gulp.task('html', 'Preprocess and build application HTML.', () => {
 })
 
 
-gulp.task('publish', 'Publish jsdoc documentation to Github pages.', ['docs'], () => {
-    return gulp.src(path.join(settings.BUILD_DIR, 'docs', '**', '*')).pipe(ghPages())
+gulp.task('js-app', 'Generate app JavaScript.', (done) => {
+    helpers.jsEntry('./src/js/index.js', 'docs', [])
+        .then(() => {
+            if (settings.LIVERELOAD) livereload.changed('docs.js')
+            else done()
+        })
 })
 
 
-gulp.task('screenshots', 'Generate in-app screenshots for jsdoc documentation.', (done) => {
+gulp.task('js-vendor', 'Generate vendor JavaScript.', [], (done) => {
+    helpers.jsEntry('./src/js/vendor', 'vendor', [])
+        .then(() => {
+            done()
+        })
+})
+
+
+gulp.task('publish', 'Publish documentation to Github pages.', ['docs'], () => {
+    return gulp.src(path.join(settings.BUILD_DIR, settings.BRAND_TARGET, 'docs', '**', '*')).pipe(ghPages())
+})
+
+
+gulp.task('screenshots', 'Generate userstory screenshots.', (done) => {
 
 })
 
 
-gulp.task('watch', 'Start development server, watch files for changes and auto-rebuild.', () => {
+gulp.task('scss', 'Generate documentation CSS.', (done) => {
+    let sources = [path.join(settings.DOCS_DIR, 'src', 'components', '**', '*.scss')]
+    return helpers.scssEntry('./src/scss/docs.scss', !settings.PRODUCTION, sources)
+})
+
+
+gulp.task('templates', 'Generate Vue component templates.', () => {
+    return helpers.compileTemplates('./src/components/**/*.vue')
+})
+
+
+gulp.task('watch', 'Run developer watch modus.', () => {
     helpers.startDevServer(8666)
-
-    gulp.watch(path.join(__dirname, 'src', 'index.html'), ['html'])
+    gulp.watch(path.join(settings.SRC_DIR, 'index.html'), ['html'])
+    gulp.watch([path.join(settings.SRC_DIR, 'scss', '**', '*.scss')], ['scss'])
 })

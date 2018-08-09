@@ -7,18 +7,35 @@ const rc = require('rc')
 
 
 // The main settings object containing info from .vialer-jsrc and build flags.
+module.exports = function(baseDir) {
+    // Define all static or simple condition settings here.
+    let settings = {
+        BASE_DIR: baseDir,
+        // `all`, or one or more of: `ia32`, `x64`, `armv7l`, `arm64`, `mips64el`
+        BUILD_ARCH: argv.arch ? argv.arch : 'x64',
+        // `all`, or one or more of: `darwin`, `linux`, `mas`, `win32`
+        BUILD_PLATFORM: argv.platform ? argv.platform : 'linux',
+        BUILD_TARGET: argv.target ? argv.target : 'chrome',
+        BUILD_TARGETS: ['chrome', 'docs', 'electron', 'edge', 'firefox', 'node', 'webview'],
+        // Default deploy target is `alpha` because it has the least impact.
+        DEPLOY_TARGET: argv.deploy ? argv.deploy : 'alpha',
+        LIVERELOAD: false,
+        // Root of the Vialer-js project.
+        ROOT_DIR: path.join(__dirname, '../'),
+        SIZE_OPTIONS: {showFiles: true, showTotal: true},
+        SRC_DIR: path.join(baseDir, 'src'),
+        VERBOSE: argv.verbose ? true : false,
+    }
 
-module.exports = (function() {
-    let settings = {}
-    // BASE_DIR is used as reference anywhere.
-    settings.BASE_DIR = path.join(__dirname, '../')
-
-    settings.BUILD_ARCH = argv.arch ? argv.arch : 'x64' // all, or one or more of: ia32, x64, armv7l, arm64, mips64el
-    settings.BUILD_DIR = process.env.BUILD_DIR || path.join(settings.BASE_DIR, 'build')
-    settings.BUILD_PLATFORM = argv.platform ? argv.platform : 'linux' // all, or one or more of: darwin, linux, mas, win32
     settings.BRAND_TARGET = argv.brand ? argv.brand : process.env.BRAND ? process.env.BRAND : 'bologna'
-    settings.BUILD_TARGET = argv.target ? argv.target : 'chrome'
-    settings.BUILD_TARGETS = ['chrome', 'docs', 'electron', 'edge', 'firefox', 'node', 'webview']
+    settings.NODE_PATH = path.join(settings.ROOT_DIR, 'node_modules') || process.env.NODE_PATH
+    settings.PACKAGE = require(`${settings.ROOT_DIR}/package`)
+    settings.SRC_DIR = path.join(settings.ROOT_DIR, 'src')
+    settings.VERSION = argv.version ? argv.version : settings.PACKAGE.version
+
+    settings.BUILD_ROOT = path.join(settings.ROOT_DIR, 'build')
+    settings.BUILD_DIR = path.join(settings.BUILD_ROOT, settings.BRAND_TARGET, settings.BUILD_TARGET)
+    settings.TEMP_DIR = path.join(settings.BUILD_ROOT, '__tmp')
 
     // Exit when the build target is not in the allowed list.
     if (!settings.BUILD_TARGETS.includes(settings.BUILD_TARGET)) {
@@ -43,22 +60,12 @@ module.exports = (function() {
         }
     }
 
-    // Default deploy target is `alpha` because it has the least impact.
-    settings.DEPLOY_TARGET = argv.deploy ? argv.deploy : 'alpha'
     // Exit when the deploy target is not in the allowed list.
     if (!['alpha', 'beta', 'production'].includes(settings.DEPLOY_TARGET)) {
         gutil.log(`Invalid deployment target: '${settings.DEPLOY_TARGET}'`)
         process.exit(0)
     }
-    settings.LIVERELOAD = false
-    settings.NODE_PATH = path.join(settings.BASE_DIR, 'node_modules') || process.env.NODE_PATH
-    settings.PACKAGE = require(`${settings.BASE_DIR}/package`)
-    settings.SRC_DIR = path.join(settings.BASE_DIR, 'src')
 
-    settings.SIZE_OPTIONS = {showFiles: true, showTotal: true}
-    settings.TEMP_DIR = path.join(settings.BUILD_DIR, '__tmp')
-    settings.VERBOSE = argv.verbose ? true : false
-    settings.VERSION = argv.version ? argv.version : settings.PACKAGE.version
     // Override the pre-defined release name structure to specifically target
     // release names in Sentry.
     if (argv.release) settings.RELEASE = argv.release
@@ -88,4 +95,4 @@ module.exports = (function() {
     gutil.log(`- VERBOSE: ${settings.VERBOSE}`)
 
     return settings
-})()
+}

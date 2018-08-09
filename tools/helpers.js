@@ -66,7 +66,7 @@ class Helpers {
             })
             .pipe(concat('templates.js'))
             .pipe(insert.prepend('global.templates={};'))
-            .pipe(gulp.dest(path.join(this.settings.BUILD_DIR, this.settings.BRAND_TARGET, this.settings.BUILD_TARGET, 'js')))
+            .pipe(gulp.dest(path.join(this.settings.BUILD_DIR, 'js')))
             .pipe(size(_extend({title: 'templates'}, this.settings.SIZE_OPTIONS)))
     }
 
@@ -235,20 +235,20 @@ class Helpers {
 
     /**
     * Return a browserify function task used for multiple entrypoints.
-    * @param {String} brandName - Brand to produce js for.
-    * @param {String} buildType - Target environment to produce js for.
-    * @param {String} target - Path to the entrypoint.
-    * @param {String} bundleName - Name of the entrypoint.
+    * @param {String} entryPoint - A Browserify entrypoint.
+    * @param {String} bundleName - Name to identify the bundle with.
     * @param {Function} entries - Optional extra entries.
     * @returns {Promise} - Resolves when finished bundling.
     */
-    jsEntry(brandName, buildType, target, bundleName, entries = []) {
+    jsEntry(entryPoint, bundleName, entries = []) {
+        const brand = this.settings.brands[this.settings.BRAND_TARGET]
+
         return new Promise((resolve) => {
             if (!BUNDLERS[bundleName]) {
                 BUNDLERS[bundleName] = browserify({
                     cache: {},
                     debug: !this.settings.PRODUCTION,
-                    entries: path.join(this.settings.SRC_DIR, 'js', `${target}.js`),
+                    entries: entryPoint,
                     packageCache: {},
                     paths: ['../node_modules', '../src/js/'],
                 })
@@ -267,44 +267,42 @@ class Helpers {
 
             BUNDLERS[bundleName].bundle()
                 .on('error', notify.onError('Error: <%= error.message %>'))
-                .on('end', () => {
-                    resolve()
-                })
+                .on('end', () => {resolve()})
                 .pipe(source(`${bundleName}.js`))
                 .pipe(buffer())
                 .pipe(sourcemaps.init({loadMaps: true}))
                 .pipe(envify({
-                    ANALYTICS_ID: this.settings.brands[brandName].telemetry.analytics_id[buildType],
-                    APP_NAME: this.settings.brands[brandName].name.production,
-                    BRAND_NAME: brandName,
+                    ANALYTICS_ID: brand.telemetry.analytics_id[this.settings.BUILD_TARGET],
+                    APP_NAME: brand.name.production,
+                    BRAND_NAME: this.settings.BRAND_TARGET,
 
-                    BUILTIN_AVAILABILITY_ADDONS: this.settings.brands[brandName].modules.builtin.availability.addons,
-                    BUILTIN_CONTACTS_I18N: this.settings.brands[brandName].modules.builtin.contacts.i18n,
-                    BUILTIN_CONTACTS_PROVIDERS: this.settings.brands[brandName].modules.builtin.contacts.providers,
-                    BUILTIN_USER_ADAPTER: this.settings.brands[brandName].modules.builtin.user.adapter,
-                    BUILTIN_USER_I18N: this.settings.brands[brandName].modules.builtin.user.i18n,
-                    CUSTOM_MOD: this.settings.brands[brandName].modules.custom,
+                    BUILTIN_AVAILABILITY_ADDONS: brand.modules.builtin.availability.addons,
+                    BUILTIN_CONTACTS_I18N: brand.modules.builtin.contacts.i18n,
+                    BUILTIN_CONTACTS_PROVIDERS: brand.modules.builtin.contacts.providers,
+                    BUILTIN_USER_ADAPTER: brand.modules.builtin.user.adapter,
+                    BUILTIN_USER_I18N: brand.modules.builtin.user.i18n,
+                    CUSTOM_MOD: brand.modules.custom,
 
                     DEPLOY_TARGET: this.settings.DEPLOY_TARGET,
                     NODE_ENV: this.settings.NODE_ENV,
-                    PLATFORM_URL: this.settings.brands[brandName].permissions,
-                    PORTAL_NAME: this.settings.brands[brandName].vendor.portal.name,
-                    PORTAL_URL: this.settings.brands[brandName].vendor.portal.url,
-                    SENTRY_DSN: this.settings.brands[brandName].telemetry.sentry.dsn,
-                    SIP_ENDPOINT: this.settings.brands[brandName].sip_endpoint,
-                    STUN: this.settings.brands[brandName].stun,
+                    PLATFORM_URL: brand.permissions,
+                    PORTAL_NAME: brand.vendor.portal.name,
+                    PORTAL_URL: brand.vendor.portal.url,
+                    SENTRY_DSN: brand.telemetry.sentry.dsn,
+                    SIP_ENDPOINT: brand.sip_endpoint,
+                    STUN: brand.stun,
 
-                    VENDOR_NAME: this.settings.brands[brandName].vendor.name,
-                    VENDOR_SUPPORT_EMAIL: this.settings.brands[brandName].vendor.support.email,
-                    VENDOR_SUPPORT_PHONE: this.settings.brands[brandName].vendor.support.phone,
-                    VENDOR_SUPPORT_WEBSITE: this.settings.brands[brandName].vendor.support.website,
+                    VENDOR_NAME: brand.vendor.name,
+                    VENDOR_SUPPORT_EMAIL: brand.vendor.support.email,
+                    VENDOR_SUPPORT_PHONE: brand.vendor.support.phone,
+                    VENDOR_SUPPORT_WEBSITE: brand.vendor.support.website,
                     VERBOSE: this.settings.VERBOSE,
                     VERSION: this.settings.PACKAGE.version,
                 }))
                 .pipe(ifElse(this.settings.PRODUCTION, () => minifier()))
                 .pipe(sourcemaps.write('./'))
                 .pipe(size(_extend({title: `${bundleName}.js`}, this.settings.SIZE_OPTIONS)))
-                .pipe(gulp.dest(path.join(this.settings.BUILD_DIR, brandName, buildType, 'js')))
+                .pipe(gulp.dest(path.join(this.settings.BUILD_DIR, 'js')))
         })
     }
 
@@ -312,15 +310,11 @@ class Helpers {
     /**
     * Browserify custom modules from the Vialer config.
     * Source: https://github.com/garage11/garage11/
-    * @param {String} brandName - Brand to produce js for.
-    * @param {String} buildType - Target environment to produce js for.
     * @param {Array} sectionModules - Vialer-js modules to build.
     * @param {String} appSection - The application type; 'bg' or 'fg'.
-    * @param {Function} cb - Callback when the task is done.
     * @returns {Promise} - Resolves when all modules are processed.
     */
-    jsModules(brandName, buildType, sectionModules, appSection) {
-
+    jsPlugins(sectionModules, appSection) {
         return new Promise((resolve) => {
             let requires = []
 
@@ -358,15 +352,12 @@ class Helpers {
                 basedir: path.join(__dirname, '..'),
                 debug: true,
                 detectGlobals: false,
-                paths: [
-                    '../', // Resolve vialer-js require.
-                ],
+                // Allows Browserify to resolve vialer-js project root require.
+                paths: ['../'],
             })
 
 
-            for (const _require of requires) {
-                b.require(_require)
-            }
+            for (const _require of requires) b.require(_require)
 
             // Rewrite requires in modules from something like 'vialer-js/bg/modules/user/adapter`
             // to `vialer-js/src/js/bg/modules/user/adapter`. Within the node runtime,
@@ -377,43 +368,40 @@ class Helpers {
                 return through(function(buf, enc, next) {
                     this.push(buf.toString('utf8').replace(aliasMatch, 'require(\'vialer-js/src/js/'))
                     next()
-                });
+                })
             })
 
             b.bundle()
                 .on('error', notify.onError('Error: <%= error.message %>'))
-                .on('end', () => {
-                    resolve()
-                })
-                .pipe(source(`app_${appSection}_modules.js`))
+                .on('end', () => {resolve()})
+                .pipe(source(`app_${appSection}_plugins.js`))
                 .pipe(buffer())
                 .pipe(sourcemaps.init({loadMaps: true}))
                 .pipe(ifElse(this.settings.PRODUCTION, () => minifier()))
                 .pipe(sourcemaps.write('./'))
-                .pipe(size(_extend({title: `app_${appSection}_modules.js`}, this.settings.SIZE_OPTIONS)))
-                .pipe(gulp.dest(path.join(this.settings.BUILD_DIR, brandName, buildType, 'js')))
+                .pipe(size(_extend({title: `app_${appSection}_plugins.js`}, this.settings.SIZE_OPTIONS)))
+                .pipe(gulp.dest(path.join(this.settings.BUILD_DIR, 'js')))
         })
     }
 
 
     /**
-    * Generic scss task used for multiple entrypoints.
-    * @param {String} brandName - Brand to produce scss for.
-    * @param {String} buildType - Target environment to produce scss for.
-    * @param {String} scssName - Name of the scss entrypoint.
+    * Generic SCSS parsing task for one or more entrypoints.
+    * @param {String} entryPath - Name of the scss entrypoint.
     * @param {String} sourcemap - Generate sourcemaps.
-    * @param {Array} extraSources - Add extra entrypoints.
+    * @param {Array} entryExtra - Add extra entrypoints.
     * @returns {Function} - Sass function to use.
     */
-    scssEntry(brandName, buildType, scssName, sourcemap = false, extraSources = []) {
-        const brandColors = this.formatScssVars(this.settings.brands[brandName].colors)
+    scssEntry(entryPath, sourcemap = false, entryExtra = []) {
+        const brandColors = this.formatScssVars(this.settings.brands[this.settings.BRAND_TARGET].colors)
         let includePaths = [
             this.settings.NODE_PATH,
             path.join(this.settings.SRC_DIR, 'scss'),
         ]
+        const name = path.basename(entryPath, '.scss')
 
-        let sources = [`./src/scss/vialer-js/${scssName}.scss`]
-        if (extraSources.length) sources = sources.concat(extraSources)
+        let sources = [entryPath]
+        if (entryExtra.length) sources = sources.concat(entryExtra)
 
         return gulp.src(sources)
             .pipe(insert.prepend(brandColors))
@@ -424,13 +412,13 @@ class Helpers {
                 sourceMapContents: false,
             }))
             .on('error', notify.onError('Error: <%= error.message %>'))
-            .pipe(concat(`${scssName}.css`))
+            .pipe(concat(`${name}.css`))
             .pipe(ifElse(this.settings.PRODUCTION, () => cleanCSS({advanced: true, level: 2})))
             .pipe(ifElse(sourcemap, () => sourcemaps.write('./')))
-            .pipe(gulp.dest(path.join(this.settings.BUILD_DIR, brandName, buildType, 'css')))
-            .pipe(size(_extend({title: `scss-${scssName}`}, this.settings.SIZE_OPTIONS)))
+            .pipe(gulp.dest(path.join(this.settings.BUILD_DIR, 'css')))
+            .pipe(size(_extend({title: `scss-${name}`}, this.settings.SIZE_OPTIONS)))
             .on('end', () => {
-                if (this.settings.LIVERELOAD) livereload.changed(`${scssName}.css`)
+                if (this.settings.LIVERELOAD) livereload.changed(`${name}.css`)
             })
     }
 
@@ -463,8 +451,8 @@ class Helpers {
         this.settings.LIVERELOAD = true
         const app = connect()
         livereload.listen({silent: false})
-        app.use(serveStatic(this.settings.BUILD_DIR))
-        app.use('/', serveIndex(this.settings.BUILD_DIR, {icons: false}))
+        app.use(serveStatic(this.settings.BUILD_ROOT))
+        app.use('/', serveIndex(this.settings.BUILD_ROOT, {icons: false}))
         app.use(mount('/docs', serveStatic(path.join(__dirname, 'build', 'docs'))))
         http.createServer(app).listen(port)
         gutil.log(`local develop server running at http://localhost:${port}`)

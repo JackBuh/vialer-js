@@ -150,8 +150,8 @@ class App extends Skeleton {
 
     /**
     * Load section modules from browserified modules. This is basically
-    * the browser-side of the `jsModules` browserify handler in
-    * `tasks/helpers.js`.
+    * the browser-side of the `jsPlugins` browserify handler in
+    * `tools/helpers.js`.
     * @param {Object} moduleList - See .vialer-jsrc.example for the format.
     */
     __loadModules(moduleList) {
