@@ -5,14 +5,14 @@
 * between endpoints.
 * @module ModuleAvailability
 */
-const Module = require('vialer-js/lib/module')
+const Plugin = require('vialer-js/lib/plugin')
 
 
 /**
 * Main entrypoint for Availability.
 * @memberof AppBackground.plugins
 */
-class ModuleAvailability extends Module {
+class ModuleAvailability extends Plugin {
     /**
     * @param {AppBackground} app - The background application.
     * @param {Array} addons - List of AvailabilityAddon classes.

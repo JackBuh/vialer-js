@@ -1,6 +1,6 @@
-const Module = require('vialer-js/lib/module')
+const Plugin = require('vialer-js/lib/plugin')
 
-class ModuleStories extends Module {
+class ModuleStories extends Plugin {
 
     constructor(app) {
         super(app)

@@ -3,14 +3,14 @@
 * settings and responding to changes to it.
 * @module ModuleSettings
 */
-const Module = require('vialer-js/lib/module')
+const Plugin = require('vialer-js/lib/plugin')
 
 
 /**
 * Main entrypoint for Settings.
 * @memberof AppBackground.plugins
 */
-class ModuleSettings extends Module {
+class ModuleSettings extends Plugin {
     /**
     * Initializes the module's store.
     * All application runtime settings are defined here. Build-time

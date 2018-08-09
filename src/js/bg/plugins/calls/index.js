@@ -5,14 +5,14 @@
 * of all the tracked Calls.
 * @module ModuleCalls
 */
-const Module = require('vialer-js/lib/module')
+const Plugin = require('vialer-js/lib/plugin')
 
 
 /**
 * Main entrypoint for Calls.
 * @memberof AppBackground.plugins
 */
-class ModuleCalls extends Module {
+class ModuleCalls extends Plugin {
     /**
     * @param {AppBackground} app - The background application.
     */

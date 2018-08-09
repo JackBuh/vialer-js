@@ -1,11 +1,11 @@
-const Module = require('vialer-js/lib/module')
+const Plugin = require('vialer-js/lib/plugin')
 
 
 /**
 * Main entrypoint for Availability.
 * @memberof AppBackground.plugins
 */
-class ModuleAvailability extends Module {
+class ModuleAvailability extends Plugin {
     constructor(app, addons) {
         super(app)
 

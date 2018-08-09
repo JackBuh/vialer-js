@@ -8,14 +8,14 @@
 * @module ModuleContacts
 */
 const Contact = require('./contact')
-const Module = require('vialer-js/lib/module')
+const Plugin = require('vialer-js/lib/plugin')
 
 
 /**
 * Main entrypoint for Contacts.
 * @memberof AppBackground.plugins
 */
-class ModuleContacts extends Module {
+class ModuleContacts extends Plugin {
     /**
     * @param {AppBackground} app - The background application.
     * @param {Array} providers - ContactProvider classes used to sync Contacts with.

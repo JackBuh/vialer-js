@@ -7,7 +7,7 @@ module.exports = (function() {
             builtin: [
                 {
                     addons: null,
-                    module: require('../modules/availability'),
+                    module: require('../plugins/availability'),
                     name: 'availability',
                 },
             ],

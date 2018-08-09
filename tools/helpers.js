@@ -53,8 +53,8 @@ class Helpers {
 
 
     /**
-    * Rewrite requires in modules from something like 'vialer-js/bg/modules/user/adapter`
-    * to `vialer-js/src/js/bg/modules/user/adapter`. Within the node runtime,
+    * Rewrite requires in modules from something like 'vialer-js/bg/plugins/user/adapter`
+    * to `vialer-js/src/js/bg/plugins/user/adapter`. Within the node runtime,
     * the same kind of aliasing is applied with module-alias. See `package.json`
     * for the alias definition.
     * @param {String} file - Browserify file being transformed.

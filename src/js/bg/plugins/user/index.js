@@ -5,14 +5,14 @@
 * with other authentication backends.
 * @module ModuleUser
 */
-const Module = require('vialer-js/lib/module')
+const Plugin = require('vialer-js/lib/plugin')
 
 
 /**
 * Main entrypoint for User.
 * @memberof AppBackground.plugins
 */
-class ModuleUser extends Module {
+class ModuleUser extends Plugin {
     /**
     * Setup events that can be called upon from `AppForeground`.
     * @param {AppBackground} app - The background application.

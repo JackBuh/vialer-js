@@ -4,14 +4,14 @@
 * be related to WebExtension-, Electron- or WebView-specific actions
 * @module ModuleUI
 */
-const Module = require('vialer-js/lib/module')
+const Plugin = require('vialer-js/lib/plugin')
 
 
 /**
 * Main entrypoint for UI.
 * @memberof AppBackground.plugins
 */
-class ModuleUI extends Module {
+class ModuleUI extends Plugin {
     /**
     * Setup some menubar and click-to-dial icon related properties.
     * @param {AppBackground} app - The background application.

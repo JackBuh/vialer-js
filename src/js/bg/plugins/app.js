@@ -4,15 +4,15 @@
 * vendor-specific handling.
 * @module ModuleApp
 */
-const Module = require('vialer-js/lib/module')
+const Plugin = require('vialer-js/lib/plugin')
 
 
 /**
 * Main entrypoint for App.
 * @memberof AppBackground.plugins
-* @extends Module
+* @extends Plugin
 */
-class ModuleApp extends Module {
+class ModuleApp extends Plugin {
     /**
     * @param {AppBackground} app - The background application.
     */

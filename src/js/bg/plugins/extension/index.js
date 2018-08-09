@@ -5,7 +5,7 @@
 * shortcuts.
 * @module ModuleExtension
 */
-const Module = require('vialer-js/lib/module')
+const Plugin = require('vialer-js/lib/plugin')
 const Tabs = require('./tabs')
 
 
@@ -13,7 +13,7 @@ const Tabs = require('./tabs')
 * Main entrypoint for Extension.
 * @memberof AppBackground.plugins
 */
-class ModuleExtension extends Module {
+class ModuleExtension extends Plugin {
     /**
     * Add listeners for update/install actions and
     * setup keyboard events.

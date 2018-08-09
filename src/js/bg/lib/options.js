@@ -10,26 +10,26 @@ module.exports = (function() {
         env,
         plugins: {
             builtin: [
-                {module: require('../modules/activity'), name: 'activity'},
-                {module: require('../modules/app'), name: 'app'},
+                {module: require('../plugins/activity'), name: 'activity'},
+                {module: require('../plugins/app'), name: 'app'},
                 {
                     addons: null,
-                    module: require('../modules/availability'),
+                    module: require('../plugins/availability'),
                     name: 'availability',
                 },
-                {module: require('../modules/calls'), name: 'calls'},
+                {module: require('../plugins/calls'), name: 'calls'},
                 {
                     i18n: null,
-                    module: require('../modules/contacts'),
+                    module: require('../plugins/contacts'),
                     name: 'contacts',
                     providers: null,
                 },
-                {module: require('../modules/settings'), name: 'settings'},
-                {module: require('../modules/ui'), name: 'ui'},
+                {module: require('../plugins/settings'), name: 'settings'},
+                {module: require('../plugins/ui'), name: 'ui'},
                 {
                     adapter: null,
                     i18n: null,
-                    module: require('../modules/user'),
+                    module: require('../plugins/user'),
                     name: 'user',
                 },
             ],
@@ -41,7 +41,7 @@ module.exports = (function() {
     let contactsPlugin = options.plugins.builtin.find((i) => i.name === 'contacts')
     let userPlugin = options.plugins.builtin.find((i) => i.name === 'user')
 
-    // Load modules from settings.
+    // Load plugins from settings.
     if (env.isNode) {
         const rc = require('rc')
         let settings = {}
@@ -65,7 +65,7 @@ module.exports = (function() {
 
         // Add an extra extension-specific module.
         if (env.isExtension) {
-            options.plugins.builtin.push({module: require('../modules/extension'), name: 'extension'})
+            options.plugins.builtin.push({module: require('../plugins/extension'), name: 'extension'})
         }
     }
 
