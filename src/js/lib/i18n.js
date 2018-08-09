@@ -8,6 +8,7 @@
 class I18n {
 
     constructor(app) {
+        this.app = app
         this.translations = {}
     }
 
@@ -21,20 +22,20 @@ class I18n {
         for (const builtinPlugin of plugins.builtin) {
             if (builtinPlugin.i18n) {
                 builtinPlugin.i18n.forEach((i) => {
-                    app.__mergeDeep(this.translations, require(`${i}/src/js/i18n`))
+                    this.app.__mergeDeep(this.translations, require(`${i}/src/js/i18n`))
                 })
             }
 
             if (builtinPlugin.addons && builtinPlugin.addons.i18n) {
                 builtinPlugin.addons.i18n.forEach((i) => {
-                    app.__mergeDeep(this.translations, require(`${i}/src/js/i18n`))
+                    this.app.__mergeDeep(this.translations, require(`${i}/src/js/i18n`))
                 })
             }
         }
 
         for (const name of Object.keys(plugins.custom)) {
             if (plugins.custom[name].parts.includes('i18n')) {
-                app.__mergeDeep(this.translations, require(`${plugins.custom[name].name}/src/js/i18n`))
+                this.app.__mergeDeep(this.translations, require(`${plugins.custom[name].name}/src/js/i18n`))
             }
         }
     }

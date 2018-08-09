@@ -33,23 +33,23 @@ test('[bg] translations', async function(t) {
 
     const bg = new AppBackground(options)
     let globPattern = '{src/js/**/*.js,src/components/**/{*.js,*.vue}'
-    const modules = settings.brands[BRAND].modules
-    if (modules.builtin.user.adapter) globPattern += `,node_modules/${modules.builtin.user.adapter}/src/**/{*.js,*.vue}`
-    if (modules.builtin.contacts.providers.length) {
-        for (const provider of modules.builtin.contacts.providers) {
+    const plugins = settings.brands[BRAND].plugins
+    if (plugins.builtin.user.adapter) globPattern += `,node_modules/${plugins.builtin.user.adapter}/src/**/{*.js,*.vue}`
+    if (plugins.builtin.contacts.providers.length) {
+        for (const provider of plugins.builtin.contacts.providers) {
             globPattern += `,node_modules/${provider}/src/**/{*.js,*.vue}`
         }
     }
 
-    if (modules.builtin.availability.addons.i18n.length) {
-        for (const addon of modules.builtin.availability.addons.i18n) {
+    if (plugins.builtin.availability.addons.i18n.length) {
+        for (const addon of plugins.builtin.availability.addons.i18n) {
             globPattern += `,node_modules/${addon}/src/**/{*.js,*.vue}`
         }
     }
 
-    if (Object.keys(modules.custom).length) {
-        for (const name of Object.keys(modules.custom)) {
-            globPattern += `,node_modules/${modules.custom[name].name}/src/**/{*.js,*.vue}`
+    if (Object.keys(plugins.custom).length) {
+        for (const name of Object.keys(plugins.custom)) {
+            globPattern += `,node_modules/${plugins.custom[name].name}/src/**/{*.js,*.vue}`
         }
     }
 

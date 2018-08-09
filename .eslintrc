@@ -29,6 +29,7 @@
         "sdpTransform": true,
         "templates": true,
         "Vue": true,
+        "VueRouter": true,
         "translations": true,
         "I18nStore": true,
         "I18nTranslations": true,

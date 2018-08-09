@@ -15,7 +15,6 @@ class AppDocs extends App {
     constructor(options) {
         super(options)
 
-
         this.components = {
             Sidebar: require('../components/sidebar'),
         }
@@ -24,19 +23,22 @@ class AppDocs extends App {
             Vue.component(name, this.components[name](this))
         }
 
-        this.__initStore()
+        this.__loadPlugins(this.__plugins)
+        this.__initStore({
+            stories: global.stories,
+        })
         this.__initViewModel()
-
-    }
-
-
-    async __initViewModel() {
-        await super.__initViewModel()
         this.vm.$mount(document.querySelector('#app-placeholder'))
+
+        this.router = new VueRouter({
+            base: '/',
+            linkActiveClass: 'is-active',
+            mode: 'history',
+        })
     }
 }
 
-global.options = require('vialer-js/fg/lib/options')
+global.options = require('./lib/options')
 
 global.AppDocs = AppDocs
 module.exports = AppDocs

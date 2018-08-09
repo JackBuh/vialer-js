@@ -5,12 +5,32 @@
     display: flex;
     flex-direction: column;
 
-    header {
+    .sidebar-header {
         background: $brand-accent-color;
         height: 200px;
     }
 
-    nav {
+    .sidebar-navigation {
 
+        header {
+            background: $brand-color;
+            color: $white-color;
+            font-weight: 500;
+            padding: $spacer;
+            text-transform: uppercase;
+        }
+
+        .sidebar-item {
+            color: $grey-color-darker;
+            font-weight: 500;
+            padding: $spacer;
+            text-transform: capitalize;
+            width: 100%;
+
+            &:hover {
+                background: $white-color;
+                cursor: pointer;
+            }
+        }
     }
 }

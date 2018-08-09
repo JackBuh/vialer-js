@@ -8,12 +8,12 @@
 * @module ModuleContacts
 */
 const Contact = require('./contact')
-const Module = require('../../lib/module')
+const Module = require('vialer-js/lib/module')
 
 
 /**
 * Main entrypoint for Contacts.
-* @memberof AppBackground.modules
+* @memberof AppBackground.plugins
 */
 class ModuleContacts extends Module {
     /**

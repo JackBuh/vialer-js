@@ -30,8 +30,8 @@ class AppBackground extends App {
     /**
     * @param {Object} opts - Options to initialize AppBackground with.
     * @param {Object} opts.env - The environment sniffer.
-    * @param {Object} opts.modules - Modules to start with.
-    * @namespace AppBackground.modules
+    * @param {Object} opts.plugins - Plugins to load.
+    * @namespace AppBackground.plugins
     */
     constructor(opts) {
         super(opts)
@@ -72,7 +72,7 @@ class AppBackground extends App {
     */
     __factoryDefaults({title, message}) {
         if (title && message) {
-            this.modules.ui.notification({force: true, message, title})
+            this.plugins.ui.notification({force: true, message, title})
         }
 
         this.store.clear()
@@ -82,7 +82,7 @@ class AppBackground extends App {
 
 
     async __init() {
-        this.__loadPlugins(this._modules)
+        this.__loadPlugins(this.__plugins)
 
         this.api = new Api(this)
         this.media = new Media(this)
@@ -118,7 +118,7 @@ class AppBackground extends App {
         this.logger.info(`${this}init connectivity services (callservice: ${callService ? 'yes' : 'no'})`)
         if (this.state.app.online) {
             if (callService) {
-                this.modules.calls.connect({register: this.state.settings.webrtc.enabled})
+                this.plugins.calls.connect({register: this.state.settings.webrtc.enabled})
             }
         }
 
@@ -206,9 +206,9 @@ class AppBackground extends App {
 
         this.devices = new Devices(this)
 
-        // Signal all modules that AppBackground is ready to go.
-        for (let module of Object.keys(this.modules)) {
-            if (this.modules[module]._ready) this.modules[module]._ready()
+        // Signal all plugins that AppBackground is ready to go.
+        for (let module of Object.keys(this.plugins)) {
+            if (this.plugins[module]._ready) this.plugins[module]._ready()
         }
     }
 
@@ -302,9 +302,9 @@ class AppBackground extends App {
             this.logger.info(`${this}init store watchers...`)
             let watchers = {}
 
-            for (let module of Object.keys(this.modules)) {
-                if (this.modules[module]._watchers) {
-                    Object.assign(watchers, this.modules[module]._watchers())
+            for (let module of Object.keys(this.plugins)) {
+                if (this.plugins[module]._watchers) {
+                    Object.assign(watchers, this.plugins[module]._watchers())
                 }
             }
 
@@ -344,16 +344,16 @@ class AppBackground extends App {
     */
     async _platformData() {
         this.logger.info(`${this}<platform> refreshing all data`)
-        const dataModules = Object.keys(this.modules).filter((m) => this.modules[m]._platformData)
+        const dataModules = Object.keys(this.plugins).filter((m) => this.plugins[m]._platformData)
         try {
-            const dataRequests = dataModules.map((m) => this.modules[m]._platformData())
+            const dataRequests = dataModules.map((m) => this.plugins[m]._platformData())
             await Promise.all(dataRequests)
         } catch (err) {
             // Network changed in the meanwhile or a timeout error occured.
             this.logger.warn(`${this} network error occured: ${err}`)
         }
 
-        if (this.state.settings.wizard.completed) this.modules.contacts.subscribe()
+        if (this.state.settings.wizard.completed) this.plugins.contacts.subscribe()
     }
 
 
@@ -394,12 +394,12 @@ class AppBackground extends App {
         let state = {}
         this.__mergeDeep(state, decryptedState, unencryptedState)
 
-        for (let module of Object.keys(this.modules)) {
-            if (this.modules[module]._restoreState) {
+        for (let module of Object.keys(this.plugins)) {
+            if (this.plugins[module]._restoreState) {
                 // Nothing persistent in this module yet. Assume an empty
                 // object to start with.
                 if (!state[module]) state[module] = {}
-                this.modules[module]._restoreState(state[module])
+                this.plugins[module]._restoreState(state[module])
             }
         }
         this.logger.debug(`${this}restore state of session "${sessionId}"`)
@@ -455,15 +455,14 @@ class AppBackground extends App {
             } else {
                 this.state.app.vault.unlocked = false
             }
-            this.modules.ui.menubarState()
+            this.plugins.ui.menubarState()
             Object.assign(this.state.user, {authenticated: false, username: sessionId})
         }
 
         // Set the info of the current sessions in the store again.
-
         await this.setState(this.state)
 
-        this.modules.ui.menubarState()
+        this.plugins.ui.menubarState()
         return sessionId
     }
 

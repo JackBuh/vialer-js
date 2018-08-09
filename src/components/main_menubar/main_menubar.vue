@@ -17,7 +17,7 @@
             <icon name="availability"/>
         </div>
 
-        <div v-if="module.menubarIcon" class="option" :class="classes(module.menubarIcon, module.menubarTransferHint)" v-for="module in customModules" @click="setLayer(module.menubarIcon)">
+        <div v-if="module.menubarIcon" class="option" :class="classes(module.menubarIcon, module.menubarTransferHint)" v-for="module in customPlugins" @click="setLayer(module.menubarIcon)">
             <icon :name="module.menubarIcon"/>
         </div>
     </div>

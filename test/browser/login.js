@@ -6,7 +6,7 @@ module.exports = function(settings) {
         if (screens) await runner.screenshot({path: path.join(settings.tests.screenshots, `${settings.tests.step(runner)}login.png`)})
 
         // The voip adapter has an endpoint field that must be filled.
-        if (settings.modules.builtin.user.adapter === 'vjs-adapter-user-voip') {
+        if (settings.plugins.builtin.user.adapter === 'vjs-adapter-user-voip') {
             await runner.type('input[name="endpoint"]', settings.tests.endpoint)
         }
 

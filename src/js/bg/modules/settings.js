@@ -3,12 +3,12 @@
 * settings and responding to changes to it.
 * @module ModuleSettings
 */
-const Module = require('../lib/module')
+const Module = require('vialer-js/lib/module')
 
 
 /**
 * Main entrypoint for Settings.
-* @memberof AppBackground.modules
+* @memberof AppBackground.plugins
 */
 class ModuleSettings extends Module {
     /**
@@ -168,7 +168,7 @@ class ModuleSettings extends Module {
         return {
             'store.settings.click2dial.enabled': (enabled) => {
                 if (this.app.env.isExtension) {
-                    this.app.modules.extension.tabs.signalIcons({enabled})
+                    this.app.plugins.extension.tabs.signalIcons({enabled})
                 }
             },
             'store.settings.telemetry.enabled': (enabled) => {
@@ -206,10 +206,10 @@ class ModuleSettings extends Module {
                 if (newUsername) {
                     this.app.logger.debug(`${this}account selection watcher: ${oldUsername} => ${newUsername}`)
                     // Give the data store a chance to update.
-                    this.app.modules.calls.connect({register: this.app.state.settings.webrtc.enabled})
+                    this.app.plugins.calls.connect({register: this.app.state.settings.webrtc.enabled})
                 } else {
                     // Unset the selected account triggers an account reset.
-                    this.app.modules.calls.disconnect(false)
+                    this.app.plugins.calls.disconnect(false)
                     this.app.emit('bg:availability:account_reset', {}, true)
                 }
             },

@@ -10,7 +10,7 @@ module.exports = (app, actions) => {
                 * Please notice that the foreground Addon is expected
                 * to have a component called `AvailabilityPostfix`.
                 */
-                addons: app.modules.availability.addons.map((addon) => {
+                addons: app.plugins.availability.addons.map((addon) => {
                     return addon.constructor.name.replace('Module', '')
                 }),
             }

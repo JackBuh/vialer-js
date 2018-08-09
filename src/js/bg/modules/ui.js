@@ -4,12 +4,12 @@
 * be related to WebExtension-, Electron- or WebView-specific actions
 * @module ModuleUI
 */
-const Module = require('../lib/module')
+const Module = require('vialer-js/lib/module')
 
 
 /**
 * Main entrypoint for UI.
-* @memberof AppBackground.modules
+* @memberof AppBackground.plugins
 */
 class ModuleUI extends Module {
     /**
@@ -114,9 +114,9 @@ class ModuleUI extends Module {
             // a closing connecting means that the popup closed.
             browser.runtime.onConnect.addListener((port) => {
                 this.app.setState({ui: {visible: true}})
-                for (let moduleName of Object.keys(this.app.modules)) {
-                    if (this.app.modules[moduleName]._onPopupAction) {
-                        this.app.modules[moduleName]._onPopupAction('open')
+                for (let moduleName of Object.keys(this.app.plugins)) {
+                    if (this.app.plugins[moduleName]._onPopupAction) {
+                        this.app.plugins[moduleName]._onPopupAction('open')
                     }
                 }
 
@@ -124,9 +124,9 @@ class ModuleUI extends Module {
                 port.onDisconnect.addListener((msg) => {
                     // Remove any overlay when the popup closes.
                     this.app.setState({ui: {overlay: null, visible: false}})
-                    for (let moduleName of Object.keys(this.app.modules)) {
-                        if (this.app.modules[moduleName]._onPopupAction) {
-                            this.app.modules[moduleName]._onPopupAction('close')
+                    for (let moduleName of Object.keys(this.app.plugins)) {
+                        if (this.app.plugins[moduleName]._onPopupAction) {
+                            this.app.plugins[moduleName]._onPopupAction('close')
                         }
                     }
                 })
@@ -136,9 +136,9 @@ class ModuleUI extends Module {
             // However, the event tis still triggered to start timers
             // and such that rely on the event.
             this.app.setState({ui: {visible: true}})
-            for (let moduleName of Object.keys(this.app.modules)) {
-                if (this.app.modules[moduleName]._onPopupAction) {
-                    this.app.modules[moduleName]._onPopupAction('open')
+            for (let moduleName of Object.keys(this.app.plugins)) {
+                if (this.app.plugins[moduleName]._onPopupAction) {
+                    this.app.plugins[moduleName]._onPopupAction('open')
                 }
             }
         }
@@ -225,9 +225,9 @@ class ModuleUI extends Module {
 
         // Modules can override the generic menubar behaviour using
         // a custom `_menubarState` method.
-        for (let moduleName of Object.keys(this.app.modules)) {
-            if (this.app.modules[moduleName]._menubarState) {
-                const moduleMenubarState = this.app.modules[moduleName]._menubarState()
+        for (let moduleName of Object.keys(this.app.plugins)) {
+            if (this.app.plugins[moduleName]._menubarState) {
+                const moduleMenubarState = this.app.plugins[moduleName]._menubarState()
                 if (moduleMenubarState) base = moduleMenubarState
             }
         }
@@ -263,10 +263,10 @@ class ModuleUI extends Module {
                     // Used to restore click-to-dial icon label state
                     // when reloading a tab page.
                     this.lastLabelMessage = {enabled: false, label: title, numbers: [number]}
-                    this.app.modules.extension.tabs.signalIcons(this.lastLabelMessage)
+                    this.app.plugins.extension.tabs.signalIcons(this.lastLabelMessage)
                 } else {
                     // No title is a reason to re-enable the target click-to-dial icon.
-                    this.app.modules.extension.tabs.signalIcons({enabled: true, label: null, numbers: [number]})
+                    this.app.plugins.extension.tabs.signalIcons({enabled: true, label: null, numbers: [number]})
                     this.lastLabelMessage = null
                 }
             }

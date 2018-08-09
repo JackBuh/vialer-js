@@ -1,8 +1,12 @@
+const fs = require('fs').promises
+const util = require('util')
+
 const childExec = require('child_process').exec
 const path = require('path')
 
 const flatten = require('gulp-flatten')
 const ghPages = require('gulp-gh-pages')
+const glob = util.promisify(require('glob'))
 const gulp = require('gulp-help')(require('gulp'), {})
 const gutil = require('gulp-util')
 const ifElse = require('gulp-if-else')
@@ -29,6 +33,7 @@ gulp.task('build', 'Generate documentation website.', (done) => {
         // 'screenshots',
         'scss-app',
         'scss-vendor',
+        'stories',
         'templates',
     ], () => {done()})
 })
@@ -80,6 +85,21 @@ gulp.task('publish', 'Publish documentation to Github pages.', ['docs'], () => {
 
 gulp.task('screenshots', 'Generate userstory screenshots.', (done) => {
 
+})
+
+
+gulp.task('stories', 'Generate story JSON.', async(done) => {
+    const filenames = await glob('src/stories/*.md')
+
+    let files = await Promise.all(filenames.map((filename) => fs.readFile(filename)))
+    let stories = {}
+    for (const [i, file] of files.entries()) {
+        const name = path.basename(filenames[i], '.md')
+        stories[name] = file.toString('utf8')
+    }
+
+    let storyString = `window.stories = ${JSON.stringify(stories)}`
+    fs.writeFile(path.join(settings.BUILD_DIR, 'js', 'stories.js'), storyString)
 })
 
 

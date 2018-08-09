@@ -5,13 +5,13 @@
 * shortcuts.
 * @module ModuleExtension
 */
-const Module = require('../../lib/module')
+const Module = require('vialer-js/lib/module')
 const Tabs = require('./tabs')
 
 
 /**
 * Main entrypoint for Extension.
-* @memberof AppBackground.modules
+* @memberof AppBackground.plugins
 */
 class ModuleExtension extends Module {
     /**
@@ -66,16 +66,16 @@ class ModuleExtension extends Module {
     _keyboardShortcuts() {
         browser.commands.onCommand.addListener((command) => {
             if (command === 'action-accept-new') {
-                this.app.modules.calls.callAction('accept-new')
+                this.app.plugins.calls.callAction('accept-new')
             } else if (command === 'action-decline-hangup') {
-                this.app.modules.calls.callAction('decline-hangup')
+                this.app.plugins.calls.callAction('decline-hangup')
             } else if (command === 'action-dnd') {
                 // Only toggle when calling options are enabled and webrtc is enabled.
                 if (this.app.state.settings.webrtc.enabled && !this.app.helpers.callOngoing() && !this.app.helpers.callingDisabled()) {
                     this.app.setState({availability: {dnd: !this.app.state.availability.dnd}})
                 }
             } else if (command === 'action-hold-active') {
-                this.app.modules.calls.callAction('hold-active')
+                this.app.plugins.calls.callAction('hold-active')
             }
         })
     }

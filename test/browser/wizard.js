@@ -12,7 +12,7 @@ module.exports = function(settings) {
         await runner.click('.test-wizard-telemetry-yes')
 
         // For now, only vjs-adapter-user-vg supports account selection.
-        if (settings.modules.builtin.user.adapter === 'vjs-adapter-user-vg') {
+        if (settings.plugins.builtin.user.adapter === 'vjs-adapter-user-vg') {
             // Wait for the select to be filled by the platform API call.
             await runner.waitFor('.component-wizard-account')
             await runner.waitFor('select option:not([disabled="disabled"])')

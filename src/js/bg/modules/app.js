@@ -4,12 +4,12 @@
 * vendor-specific handling.
 * @module ModuleApp
 */
-const Module = require('../lib/module')
+const Module = require('vialer-js/lib/module')
 
 
 /**
 * Main entrypoint for App.
-* @memberof AppBackground.modules
+* @memberof AppBackground.plugins
 * @extends Module
 */
 class ModuleApp extends Module {

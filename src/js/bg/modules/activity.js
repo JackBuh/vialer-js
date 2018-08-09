@@ -4,7 +4,7 @@
 * activity entries.
 * @module ModuleActivity
 */
-const Module = require('../lib/module')
+const Module = require('vialer-js/lib/module')
 
 // Cap the maximum amount of stored activities, so the
 // localStorage won't be grinded to a halt.
@@ -12,7 +12,7 @@ const MAX_ACTIVITIES = 20
 
 /**
 * Main entrypoint for Activity.
-* @memberof AppBackground.modules
+* @memberof AppBackground.plugins
 */
 class ModuleActivity extends Module {
     /**

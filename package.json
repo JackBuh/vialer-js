@@ -87,6 +87,7 @@
         "uglify-es": "3.x.x",
         "vinyl-buffer": "1.x.x",
         "vinyl-source-stream": "1.x.x",
+        "vue-router": "^3.0.1",
         "vue-svgicon": "2.x.x",
         "watchify": "3.x.x",
         "yargs": "7.x.x"
@@ -99,12 +100,13 @@
         "electron": "^3.0.0-beta.4",
         "electron-reload": "1.x.x",
         "eventemitter3": "2.x.x",
-        "module-alias": "^2.1.0",
+        "module-alias": "2.x.x",
         "puppeteer": "1.x.x",
         "raven-js": "3.x.x",
         "roboto-fontface": "0.8.x",
         "sdp-transform": "2.4.x",
         "shortid": "2.x.x",
+        "showdown": "^1.8.6",
         "sip.js": "0.10.x",
         "vjs-adapter-user-vg": "github:vialer/vjs-adapter-user-vg#master",
         "vjs-adapter-user-voip": "github:vialer/vjs-adapter-user-voip#master",
@@ -115,7 +117,7 @@
         "vue-i18n-stash": "git+https://github.com/wearespindle/vue-stash-i18n.git#master",
         "vue-stash": "2.0.1-beta",
         "vuelidate": "0.6.x",
-        "webextension-polyfill": "0.2.x"
+        "webextension-polyfill": "0.x.x"
     },
     "_moduleAliases": {
         "vialer-js": "./src/js"

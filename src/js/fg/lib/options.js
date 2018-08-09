@@ -1,9 +1,9 @@
 module.exports = (function() {
-    const env = require('../../lib/env')({role: 'fg'})
+    const env = require('../../lib/env')({section: 'fg'})
 
     let options = {
         env,
-        modules: {
+        plugins: {
             builtin: [
                 {
                     addons: null,
@@ -15,7 +15,7 @@ module.exports = (function() {
         },
     }
 
-    let availabilityModule = options.modules.builtin.find((i) => i.name === 'availability')
+    let availabilityPlugin = options.plugins.builtin.find((i) => i.name === 'availability')
 
     if (env.isNode) {
         const rc = require('rc')
@@ -23,11 +23,11 @@ module.exports = (function() {
         rc('vialer-js', settings)
         const BRAND = process.env.BRAND ? process.env.BRAND : 'bologna'
         const brand = settings.brands[BRAND]
-        availabilityModule.addons = brand.modules.builtin.availability.addons
+        availabilityPlugin.addons = brand.plugins.builtin.availability.addons
     } else {
         // Load modules through envify replacement.
-        availabilityModule.addons = process.env.BUILTIN_AVAILABILITY_ADDONS
-        options.modules.custom = process.env.CUSTOM_MOD
+        availabilityPlugin.addons = process.env.BUILTIN_AVAILABILITY_ADDONS
+        options.plugins.custom = process.env.CUSTOM_MOD
     }
 
     return options

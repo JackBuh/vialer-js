@@ -299,12 +299,12 @@ class Helpers {
                     APP_NAME: brand.name.production,
                     BRAND_NAME: this.settings.BRAND_TARGET,
 
-                    BUILTIN_AVAILABILITY_ADDONS: brand.modules.builtin.availability.addons,
-                    BUILTIN_CONTACTS_I18N: brand.modules.builtin.contacts.i18n,
-                    BUILTIN_CONTACTS_PROVIDERS: brand.modules.builtin.contacts.providers,
-                    BUILTIN_USER_ADAPTER: brand.modules.builtin.user.adapter,
-                    BUILTIN_USER_I18N: brand.modules.builtin.user.i18n,
-                    CUSTOM_MOD: brand.modules.custom,
+                    BUILTIN_AVAILABILITY_ADDONS: brand.plugins.builtin.availability.addons,
+                    BUILTIN_CONTACTS_I18N: brand.plugins.builtin.contacts.i18n,
+                    BUILTIN_CONTACTS_PROVIDERS: brand.plugins.builtin.contacts.providers,
+                    BUILTIN_USER_ADAPTER: brand.plugins.builtin.user.adapter,
+                    BUILTIN_USER_I18N: brand.plugins.builtin.user.i18n,
+                    CUSTOM_MOD: brand.plugins.custom,
 
                     DEPLOY_TARGET: this.settings.DEPLOY_TARGET,
                     NODE_ENV: this.settings.NODE_ENV,

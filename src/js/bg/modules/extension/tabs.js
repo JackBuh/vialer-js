@@ -1,7 +1,7 @@
 /**
 * Tabs is a webextension-only class, so no need to
 * check for environment conditions here.
-* @memberof app.modules.extension
+* @memberof app.plugins.extension
 */
 class Tabs {
     constructor(app) {
@@ -16,8 +16,8 @@ class Tabs {
         this.app.on('bg:tabs:observer_toggle', (data) => {
             data.callback({observe: this.tabIconsEnabled(data.sender.tab)})
             // Restore last active message.
-            if (this.app.modules.ui.lastLabelMessage) {
-                this.signalIcons(this.app.modules.ui.lastLabelMessage)
+            if (this.app.plugins.ui.lastLabelMessage) {
+                this.signalIcons(this.app.plugins.ui.lastLabelMessage)
             }
         })
         // Call this event when the updated application state needs to be

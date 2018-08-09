@@ -4,11 +4,11 @@
 * Node and Browsers.
 */
 module.exports = (function() {
-    const env = require('../../lib/env')({role: 'bg'})
+    const env = require('../../lib/env')({section: 'bg'})
 
     let options = {
         env,
-        modules: {
+        plugins: {
             builtin: [
                 {module: require('../modules/activity'), name: 'activity'},
                 {module: require('../modules/app'), name: 'app'},
@@ -37,9 +37,9 @@ module.exports = (function() {
         },
     }
 
-    let availabilityModule = options.modules.builtin.find((i) => i.name === 'availability')
-    let contactModule = options.modules.builtin.find((i) => i.name === 'contacts')
-    let userModule = options.modules.builtin.find((i) => i.name === 'user')
+    let availabilityPlugin = options.plugins.builtin.find((i) => i.name === 'availability')
+    let contactsPlugin = options.plugins.builtin.find((i) => i.name === 'contacts')
+    let userPlugin = options.plugins.builtin.find((i) => i.name === 'user')
 
     // Load modules from settings.
     if (env.isNode) {
@@ -48,24 +48,24 @@ module.exports = (function() {
         rc('vialer-js', settings)
         const BRAND = process.env.BRAND ? process.env.BRAND : 'bologna'
         const brand = settings.brands[BRAND]
-        availabilityModule.addons = brand.modules.builtin.availability.addons
-        contactModule.providers = brand.modules.builtin.contacts.providers
-        contactModule.i18n = brand.modules.builtin.contacts.i18n
-        userModule.adapter = brand.modules.builtin.user.adapter
-        userModule.i18n = brand.modules.builtin.user.i18n
-        options.modules.custom = brand.modules.custom
+        availabilityPlugin.addons = brand.plugins.builtin.availability.addons
+        contactsPlugin.providers = brand.plugins.builtin.contacts.providers
+        contactsPlugin.i18n = brand.plugins.builtin.contacts.i18n
+        userPlugin.adapter = brand.plugins.builtin.user.adapter
+        userPlugin.i18n = brand.plugins.builtin.user.i18n
+        options.plugins.custom = brand.plugins.custom
     } else {
-        // Load modules through envify replacement.
-        availabilityModule.addons = process.env.BUILTIN_AVAILABILITY_ADDONS
-        contactModule.providers = process.env.BUILTIN_CONTACTS_PROVIDERS
-        contactModule.i18n = process.env.BUILTIN_USER_I18N
-        userModule.adapter = process.env.BUILTIN_USER_ADAPTER
-        userModule.i18n = process.env.BUILTIN_USER_I18N
-        options.modules.custom = process.env.CUSTOM_MOD
+        // Load plugins through envify replacement.
+        availabilityPlugin.addons = process.env.BUILTIN_AVAILABILITY_ADDONS
+        contactsPlugin.providers = process.env.BUILTIN_CONTACTS_PROVIDERS
+        contactsPlugin.i18n = process.env.BUILTIN_USER_I18N
+        userPlugin.adapter = process.env.BUILTIN_USER_ADAPTER
+        userPlugin.i18n = process.env.BUILTIN_USER_I18N
+        options.plugins.custom = process.env.CUSTOM_MOD
 
         // Add an extra extension-specific module.
         if (env.isExtension) {
-            options.modules.builtin.push({module: require('../modules/extension'), name: 'extension'})
+            options.plugins.builtin.push({module: require('../modules/extension'), name: 'extension'})
         }
     }
 

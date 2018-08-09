@@ -44,7 +44,7 @@ class UserAdapter {
         // Remove credentials from basic auth.
         this.app.api.setupClient()
         // Disconnect without reconnect attempt.
-        this.app.modules.calls.disconnect(false)
+        this.app.plugins.calls.disconnect(false)
         this.app.emit('bg:user:logged_out', {}, true)
 
         // Fallback to the browser language or to english.

@@ -5,12 +5,12 @@
 * with other authentication backends.
 * @module ModuleUser
 */
-const Module = require('../../lib/module')
+const Module = require('vialer-js/lib/module')
 
 
 /**
 * Main entrypoint for User.
-* @memberof AppBackground.modules
+* @memberof AppBackground.plugins
 */
 class ModuleUser extends Module {
     /**

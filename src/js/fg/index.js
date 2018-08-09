@@ -3,7 +3,7 @@
 * @namespace AppForeground
 */
 const App = require('../lib/app')
-const env = require('../lib/env')({role: 'fg'})
+const env = require('../lib/env')({section: 'fg'})
 const Media = require('../lib/media')
 const Sounds = require('../lib/sounds')
 
@@ -60,7 +60,7 @@ class AppForeground extends App {
             Wizard: require('../../components/wizard'),
         }
 
-        this.__loadPlugins(opts.modules)
+        this.__loadPlugins(opts.plugins)
 
         for (const name of Object.keys(this.components)) {
             Vue.component(name, this.components[name](this))

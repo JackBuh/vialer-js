@@ -225,7 +225,7 @@ gulp.task('js-vendor-fg', 'Generate vendor JavaScript for the foreground app sec
 gulp.task('js-app-bg', 'Generate background app section JavaScript.', (done) => {
     helpers.jsEntry('./src/js/bg/index.js', 'app_bg', []).then(() => {
         if (settings.LIVERELOAD) livereload.changed('app_bg.js')
-        if (WATCHTEST) runSequence(['test'], done)
+        if (WATCHTEST) runSequence(['test-unit'], done)
         else done()
     })
 })
@@ -234,15 +234,15 @@ gulp.task('js-app-bg', 'Generate background app section JavaScript.', (done) => 
 gulp.task('js-app-fg', 'Generate foreground app section JavaScript.', (done) => {
     helpers.jsEntry('./src/js/fg/index.js', 'app_fg', []).then(() => {
         if (settings.LIVERELOAD) livereload.changed('app_fg.js')
-        if (WATCHTEST) runSequence(['test'], done)
+        if (WATCHTEST) runSequence(['test-unit'], done)
         else done()
     })
 })
 
 
 gulp.task('js-app-plugins', 'Generate app sections plugin JavaScript.', ['i18n'], (done) => {
-    const builtin = settings.brands[settings.BRAND_TARGET].modules.builtin
-    const custom = settings.brands[settings.BRAND_TARGET].modules.custom
+    const builtin = settings.brands[settings.BRAND_TARGET].plugins.builtin
+    const custom = settings.brands[settings.BRAND_TARGET].plugins.custom
 
     Promise.all([
         helpers.jsPlugins(Object.assign(builtin, custom), 'bg'),
@@ -256,7 +256,7 @@ gulp.task('js-app-plugins', 'Generate app sections plugin JavaScript.', ['i18n']
 
 gulp.task('js-app-observer', 'Generate tab app section Javascript.', (done) => {
     helpers.jsEntry('./src/js/observer/index.js', 'app_observer', []).then(() => {
-        if (WATCHTEST) runSequence(['test'], done)
+        if (WATCHTEST) runSequence(['test-unit'], done)
         else done()
     })
 })
@@ -280,8 +280,8 @@ gulp.task('scss', 'Generate all CSS files.', [], (done) => {
 
 gulp.task('scss-app', 'Generate application CSS.', () => {
     let sources = [path.join(settings.SRC_DIR, 'components', '**', '*.scss')]
-    const builtin = settings.brands[settings.BRAND_TARGET].modules.builtin
-    const custom = settings.brands[settings.BRAND_TARGET].modules.custom
+    const builtin = settings.brands[settings.BRAND_TARGET].plugins.builtin
+    const custom = settings.brands[settings.BRAND_TARGET].plugins.custom
 
     const sectionModules = Object.assign(builtin, custom)
     for (const moduleName of Object.keys(sectionModules)) {
@@ -335,23 +335,23 @@ gulp.task('sentry-release-remove', 'Remove release and its artifacts from Sentry
 
 gulp.task('templates', 'Generate builtin and plugin Vue component templates.', () => {
     let sources = ['./src/components/**/*.vue']
-    const builtin = settings.brands[settings.BRAND_TARGET].modules.builtin
-    const custom = settings.brands[settings.BRAND_TARGET].modules.custom
+    const builtin = settings.brands[settings.BRAND_TARGET].plugins.builtin
+    const custom = settings.brands[settings.BRAND_TARGET].plugins.custom
 
-    const sectionModules = Object.assign(builtin, custom)
-    for (const moduleName of Object.keys(sectionModules)) {
-        const sectionModule = sectionModules[moduleName]
+    const sectionPlugins = Object.assign(builtin, custom)
+    for (const moduleName of Object.keys(sectionPlugins)) {
+        const sectionPlugin = sectionPlugins[moduleName]
 
-        if (sectionModule.addons && sectionModule.addons.fg.length) {
-            for (const addon of sectionModule.addons.fg) {
+        if (sectionPlugin.addons && sectionPlugin.addons.fg.length) {
+            for (const addon of sectionPlugin.addons.fg) {
                 const dirName = addon.split('/')[0]
                 gutil.log(`[fg] addon templates for ${moduleName} (${addon})`)
                 sources.push(path.join(settings.NODE_PATH, dirName, 'src', 'components', '**', '*.vue'))
             }
-        } else if (sectionModule.parts && sectionModule.parts.includes('fg')) {
-            gutil.log(`[fg] custom templates for ${moduleName} (${sectionModule.name})`)
+        } else if (sectionPlugin.parts && sectionPlugin.parts.includes('fg')) {
+            gutil.log(`[fg] custom templates for ${moduleName} (${sectionPlugin.name})`)
             // The module may include a path to the source file.
-            sources.push(path.join(settings.NODE_PATH, sectionModule.name, 'src', 'components', '**', '*.vue'))
+            sources.push(path.join(settings.NODE_PATH, sectionPlugin.name, 'src', 'components', '**', '*.vue'))
         }
     }
 
@@ -381,8 +381,8 @@ gulp.task('test-browser', 'Run browser tests on a served webview.', ['build'], f
 
 
 gulp.task('i18n', 'Generate i18n translations.', (done) => {
-    const builtin = settings.brands[settings.BRAND_TARGET].modules.builtin
-    const custom = settings.brands[settings.BRAND_TARGET].modules.custom
+    const builtin = settings.brands[settings.BRAND_TARGET].plugins.builtin
+    const custom = settings.brands[settings.BRAND_TARGET].plugins.custom
     Promise.all([
         helpers.jsPlugins(Object.assign(builtin, custom), 'i18n'),
         helpers.jsEntry('./src/js/i18n/index.js', 'app_i18n', []),
@@ -399,7 +399,7 @@ gulp.task('watch', 'Run developer watch modus.', () => {
     if (settings.BUILD_TARGET === 'electron') {
         gulp.watch([path.join(settings.SRC_DIR, 'js', 'main.js')], ['js-electron'])
     } else if (settings.BUILD_TARGET === 'node') {
-        gulp.watch([path.join(settings.SRC_DIR, 'js', '**', '*.js')], ['test'])
+        gulp.watch([path.join(settings.SRC_DIR, 'js', '**', '*.js')], ['test-unit'])
         // Node development doesn't require transpilation. No other watchers
         // are required at this moment.
         return
@@ -468,5 +468,5 @@ gulp.task('watch', 'Run developer watch modus.', () => {
         path.join(settings.NODE_PATH, 'vjs-mod-*', 'src', 'components', '**', '*.vue'),
     ], ['templates'])
 
-    gulp.watch(path.join(settings.ROOT_DIR, 'test', '**', '*.js'), ['test'])
+    gulp.watch(path.join(settings.ROOT_DIR, 'test', 'bg', '**', '*.js'), ['test-unit'])
 })

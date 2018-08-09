@@ -19,7 +19,7 @@ class EndpointSip extends Endpoint {
         super(contact, state)
 
         if (this.state.active) {
-            this.presence = new PresenceSip(this, this.app.modules.calls)
+            this.presence = new PresenceSip(this, this.app.plugins.calls)
         }
     }
 }

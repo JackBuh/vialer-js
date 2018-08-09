@@ -12,33 +12,31 @@ class App extends Skeleton {
 
     constructor(options) {
         super(options)
-        // Environment sniffer.
+        // Environment detection.
         this.env = options.env
-        // Lazy placeholder method for translation definition. This method
-        // is replaced by the actual translation method after the store is
-        // initialized. Used to detect in-code translations before the
-        // application is initialized.
-
-        this.i18n = new I18nTranslations(this, options.modules)
+        this.i18n = new I18nTranslations(this, options.plugins)
 
         this.$t = (text) => text
         this.filters = require('./filters')(this)
         this.helpers = require('./helpers')(this)
 
         // Contains all registered App modules.
-        this.modules = {}
-        this._modules = options.modules
+        this.plugins = {}
+        this.__plugins = options.plugins
 
         // Use shorthand naming for the event target, because
         // the script context is part of the event name as a
         // convention.
-        if (this.env.role.bg) {
+        if (this.env.section.bg) {
             this._emitTarget = 'fg'
             this._appSection = 'bg'
-        } else if (this.env.role.fg) {
+        } else if (this.env.section.fg) {
             this._emitTarget = 'bg'
             this._appSection = 'fg'
-        } else throw new Error(`invalid app role: ${this.env.role}`)
+        } else if (this.env.section.app) {
+            this._emitTarget = 'app'
+            this._appSection = 'app'
+        } else throw new Error(`invalid app section: ${this.env.section}`)
     }
 
 
@@ -65,8 +63,9 @@ class App extends Skeleton {
     * gets its state from the background, while the background
     * gets its state from localstorage or from a
     * hardcoded default fallback.
+    * @param {Object} initialState - Extra state to begin with.
     */
-    __initStore() {
+    __initStore(initialState = {}) {
         /**
         * The state is a reactive store that is used to respond
         * to changes in data. The UI totally depends on the store
@@ -74,9 +73,9 @@ class App extends Skeleton {
         * to changes with the use of watchers.
         * @memberof App
         */
-        this.state = {
+        this.state = Object.assign({
             env: this.env,
-        }
+        }, initialState)
     }
 
 
@@ -145,39 +144,39 @@ class App extends Skeleton {
 
 
     /**
-    * Load section modules from browserified modules. This is basically
+    * Load section plugins from browserified modules. This is basically
     * the browser-side of the `jsPlugins` browserify handler in
     * `tools/helpers.js`.
     * @param {Object} plugins - See .vialer-jsrc.example for the format.
     */
     __loadPlugins(plugins) {
-        // Start by initializing builtin modules.
+        // Start by initializing builtin plugins.
         for (const builtin of plugins.builtin) {
             if (builtin.addons) {
                 const addonModules = builtin.addons[this._appSection].map((addon) => {
                     return require(`${addon}/src/js/${this._appSection}`)
                 })
-                this.modules[builtin.name] = new builtin.module(this, addonModules)
+                this.plugins[builtin.name] = new builtin.module(this, addonModules)
             } else if (builtin.providers) {
                 const providerModules = builtin.providers.map((mod) => {
                     return require(`${mod}/src/js/${this._appSection}`)
                 })
-                this.modules[builtin.name] = new builtin.module(this, providerModules)
+                this.plugins[builtin.name] = new builtin.module(this, providerModules)
             } else if (builtin.adapter) {
                 const adapterModule = require(`${builtin.adapter}/src/js/${this._appSection}`)
-                this.modules[builtin.name] = new builtin.module(this, adapterModule)
+                this.plugins[builtin.name] = new builtin.module(this, adapterModule)
             } else {
-                // Other modules without any config.
-                this.modules[builtin.name] = new builtin.module(this, null)
+                // Other plugins without any config.
+                this.plugins[builtin.name] = new builtin.module(this, null)
             }
         }
 
         // Then process custom modules.
-        for (const moduleName of Object.keys(this._modules.custom)) {
-            const customModule = this._modules.custom[moduleName]
-            if (customModule.parts.includes(this._appSection)) {
-                const CustomModule = require(`${customModule.name}/src/js/${this._appSection}`)
-                this.modules[moduleName] = new CustomModule(this)
+        for (const moduleName of Object.keys(this.__plugins.custom)) {
+            const customPlugin = this.__plugins.custom[moduleName]
+            if (customPlugin.parts.includes(this._appSection)) {
+                const CustomPlugin = require(`${customPlugin.name}/src/js/${this._appSection}`)
+                this.plugins[moduleName] = new CustomPlugin(this)
             }
         }
     }
@@ -279,9 +278,9 @@ class App extends Skeleton {
     */
     _initialState() {
         let state = {}
-        for (let moduleName of Object.keys(this.modules)) {
-            if (this.modules[moduleName]._initialState) {
-                state[moduleName] = this.modules[moduleName]._initialState()
+        for (let moduleName of Object.keys(this.plugins)) {
+            if (this.plugins[moduleName]._initialState) {
+                state[moduleName] = this.plugins[moduleName]._initialState()
             }
         }
 

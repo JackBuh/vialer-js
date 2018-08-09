@@ -11,10 +11,10 @@
 * Call this method in the script context to get
 * the context back as an object.
 * @param {Object} opts - Options
-* @param {String} opts.role - The role this script will play.
+* @param {String} opts.section - The section of an app that the running script represents.
 * @returns {Object} - Environment-specific flags.
 */
-function env({role}) {
+function env({section}) {
     let _env = {
         isBrowser: false,
         isChrome: false,
@@ -28,14 +28,15 @@ function env({role}) {
         isPopout: false,
         isWindows: false,
         name: 'unknown',
-        role: {
+        section: {
+            app: false,
             bg: false,
             fg: false,
             observer: false,
         },
     }
 
-    _env.role[role] = true
+    _env.section[section] = true
 
     let ua
 
@@ -63,7 +64,7 @@ function env({role}) {
         if (navigator.platform.match(/(Linux)/i)) _env.isLinux = true
         else if (navigator.platform.match(/(Mac)/i)) _env.isMacOS = true
         else if (navigator.platform.match(/(Windows|Win32)/i)) _env.isWindows = true
-        if (_env.role.fg) {
+        if (_env.section.fg) {
             if (location.search.includes('test=true')) {
                 $('html').classList.add('test')
             }
@@ -95,7 +96,7 @@ function env({role}) {
         let electronNamespace = 'electron'
         window.electron = require(electronNamespace)
         _env.isElectron = true
-        if (_env.role.fg) {
+        if (_env.section.fg) {
             $('html').classList.add('electron')
             // In Electron, a different IPC mechanism is used to set
             // the window height from the main script.

@@ -19,7 +19,7 @@ class Call {
     */
     constructor(app, target, {active, silent} = {}) {
         this.app = app
-        this.module = app.modules.calls
+        this.module = app.plugins.calls
 
         this.silent = silent
 
@@ -108,7 +108,7 @@ class Call {
         if (!this.silent) {
             this.app.setState({ui: {layer: 'calls', menubar: {event: 'ringing'}}})
 
-            this.app.modules.ui.notification({
+            this.app.plugins.ui.notification({
                 message: `${this.state.number}: ${this.state.displayName}`,
                 number: this.state.number,
                 title: this.translations.invite,
@@ -164,7 +164,7 @@ class Call {
             let message = ''
             if (displayName) message = `${this.state.number}: ${displayName}`
             else message = this.state.number
-            this.app.modules.ui.notification({message, number: this.state.number, title: this.translations.create})
+            this.app.plugins.ui.notification({message, number: this.state.number, title: this.translations.create})
         }
 
         this.setState({displayName: displayName, status: this._statusMap.create})
@@ -194,7 +194,7 @@ class Call {
         this.setState({status: 'accepted', timer: {current: new Date().getTime(), start: new Date().getTime()}})
 
         const title = this.translations.accepted[this.state.type]
-        this.app.modules.ui.notification({force, message, number: this.state.number, title})
+        this.app.plugins.ui.notification({force, message, number: this.state.number, title})
 
         this.app.setState({ui: {menubar: {event: 'calling'}}})
         this.timerId = window.setInterval(() => {
@@ -232,10 +232,10 @@ class Call {
         if (force) {
             if (this.state.status === 'rejected_b') {
                 const title = this.translations.rejected_b
-                this.app.modules.ui.notification({force, message, number: this.state.number, stack: true, title})
+                this.app.plugins.ui.notification({force, message, number: this.state.number, stack: true, title})
             } else {
                 const title = this.translations.bye
-                this.app.modules.ui.notification({force, message, number: this.state.number, stack: true, title})
+                this.app.plugins.ui.notification({force, message, number: this.state.number, stack: true, title})
             }
         }
 
@@ -255,7 +255,7 @@ class Call {
             this.busyTone.stop()
             this.module.deleteCall(this)
             // Signal browser tabs to remove the click-to-dial notification label.
-            this.app.modules.ui.notification({number: this.state.number})
+            this.app.plugins.ui.notification({number: this.state.number})
         }, timeout)
     }
 

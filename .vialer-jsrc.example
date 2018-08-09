@@ -10,7 +10,7 @@
                 "primary-color": "#3c3c50",
                 "red-color": "#da534F"
             },
-            "modules": {
+            "plugins": {
                 "builtin": {
                     "availability": {
                         "addons": {

@@ -5,12 +5,12 @@
 * of all the tracked Calls.
 * @module ModuleCalls
 */
-const Module = require('../../lib/module')
+const Module = require('vialer-js/lib/module')
 
 
 /**
 * Main entrypoint for Calls.
-* @memberof AppBackground.modules
+* @memberof AppBackground.plugins
 */
 class ModuleCalls extends Module {
     /**
@@ -653,7 +653,7 @@ class ModuleCalls extends Module {
                     if (uaStatus === 'registered') this.app.setState({calls: {status: null}})
                 } else if (uaStatus === 'connected') this.app.setState({calls: {status: null}})
 
-                this.app.modules.ui.menubarState()
+                this.app.plugins.ui.menubarState()
             },
         }
     }

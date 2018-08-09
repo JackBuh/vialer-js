@@ -12,7 +12,7 @@ module.exports = function(app) {
     * @param {String} options - Options to pass to the Call constructor.
     * @param {String} type - Force to create a type of Call.
     * @returns {Call} - A type of Call, currently `CallSIP` or `CallConnectAB`.
-    * @memberof app.modules.calls
+    * @memberof app.plugins.calls
     */
     function callFactory(target = null, options = {}, type = null) {
         // Return a specific type of Call when requested.

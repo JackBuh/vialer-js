@@ -85,7 +85,7 @@ class Media {
                 try {
                     await this.query()
                     // Early device query.
-                    if (this.app.env.role.bg && !this.app.devices.cached) {
+                    if (this.app.env.section.bg && !this.app.devices.cached) {
                         await this.app.devices.verifySinks()
                     }
                 } catch (err) {
@@ -119,7 +119,7 @@ class Media {
         } catch (err) {
             // There are no devices at all. Spawn a warning.
             if (err.message === 'Requested device not found') {
-                if (this.app.env.role.fg) {
+                if (this.app.env.section.fg) {
                     this.app.notify({icon: 'warning', message: this.app.$t('no audio devices found.'), type: 'warning'})
                 }
                 throw new Error(err)
