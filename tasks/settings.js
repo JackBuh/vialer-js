@@ -79,5 +79,13 @@ module.exports = (function() {
     // Load the Vialer settings from ~/.vialer-jsrc into the existing settings.
     rc('vialer-js', settings)
 
+    // Notify developer about some essential build flag values.
+    gutil.log('BUILD FLAGS:')
+    gutil.log(`- BRAND: ${settings.BRAND_TARGET}`)
+    gutil.log(`- DEPLOY: ${settings.DEPLOY_TARGET}`)
+    gutil.log(`- PRODUCTION: ${settings.PRODUCTION}`)
+    gutil.log(`- TARGET: ${settings.BUILD_TARGET}`)
+    gutil.log(`- VERBOSE: ${settings.VERBOSE}`)
+
     return settings
 })()

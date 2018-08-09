@@ -11,6 +11,7 @@ const connect = require('connect')
 const createReleaseManager = require('gulp-sentry-release-manager')
 const envify = require('gulp-envify')
 const fs = require('fs')
+const fuet = require('gulp-fuet')
 const gulp = require('gulp-help')(require('gulp'), {})
 const gutil = require('gulp-util')
 const http = require('http')
@@ -48,6 +49,25 @@ class Helpers {
 
     constructor(settings) {
         this.settings = settings
+    }
+
+
+    compileTemplates(sources) {
+        return gulp.src(sources)
+            .pipe(fuet({
+                commonjs: false,
+                namespace: 'global.templates',
+                pathfilter: ['src', 'components', 'node_modules'],
+            }))
+            .on('error', notify.onError('Error: <%= error.message %>'))
+            .pipe(ifElse(this.settings.PRODUCTION, () => minifier()))
+            .on('end', () => {
+                if (this.settings.LIVERELOAD) livereload.changed('templates.js')
+            })
+            .pipe(concat('templates.js'))
+            .pipe(insert.prepend('global.templates={};'))
+            .pipe(gulp.dest(path.join(this.settings.BUILD_DIR, this.settings.BRAND_TARGET, this.settings.BUILD_TARGET, 'js')))
+            .pipe(size(_extend({title: 'templates'}, this.settings.SIZE_OPTIONS)))
     }
 
 
@@ -435,11 +455,12 @@ class Helpers {
 
 
     /**
-    * Fire up a development server that serves docs
+    * Start a development server that serves docs
     * and the build directory.
+    * @param {Number} [port] - Port to listen on for the HTTP server.
     */
-    startDevServer() {
-        const port = 8999
+    startDevServer(port = 8999) {
+        this.settings.LIVERELOAD = true
         const app = connect()
         livereload.listen({silent: false})
         app.use(serveStatic(this.settings.BUILD_DIR))

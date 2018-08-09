@@ -8,7 +8,7 @@
     },
     "scripts": {
         "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-        "test": "gulp test;gulp test-browser",
+        "test": "gulp test-unit;gulp test-browser",
         "link": "npm link vjs-adapter-user-vg;npm link vjs-adapter-user-voip;npm link vjs-addon-availability-vg;npm link vjs-mod-queues-vg;npm link vjs-provider-contacts-vg;npm link jsdoc-rtd; npm link gulp-fuet",
         "lint-js": "./node_modules/.bin/eslint './src/**/*.js'",
         "lint-scss": "./node_modules/sass-lint/bin/sass-lint.js -v -c ./.sass-lint.yml 'src/**/*.scss' --max-warnings 0"
@@ -87,6 +87,7 @@
         "uglify-es": "3.x.x",
         "vinyl-buffer": "1.x.x",
         "vinyl-source-stream": "1.x.x",
+        "vue-markdown": "^2.2.4",
         "vue-svgicon": "2.x.x",
         "watchify": "3.x.x",
         "yargs": "7.x.x"
