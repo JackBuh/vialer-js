@@ -1,0 +1,17 @@
+@import "vialer-js/lib/variables";
+
+.component-main {
+    display: flex;
+    height: 100%;
+    width: 100%;
+
+    .app-view-sidebar {
+
+        width: 300px;
+    }
+
+    .app-view-main {
+
+        flex: 1;
+    }
+}

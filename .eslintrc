@@ -32,7 +32,7 @@
         "translations": true,
         "I18nStore": true,
         "I18nTranslations": true,
-        "i18n": true,
+        "I18nStash": true,
         "EventEmitter": true,
         "Raven": true,
         "SIP": true,

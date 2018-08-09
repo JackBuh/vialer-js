@@ -52,6 +52,25 @@ class Helpers {
     }
 
 
+    /**
+    * Rewrite requires in modules from something like 'vialer-js/bg/modules/user/adapter`
+    * to `vialer-js/src/js/bg/modules/user/adapter`. Within the node runtime,
+    * the same kind of aliasing is applied with module-alias. See `package.json`
+    * for the alias definition.
+    * @param {String} file - Browserify file being transformed.
+    * @param {Object} opts - Browserify options.
+    * @returns {Stream} - A stream that is both readable and writable.
+    */
+    browserifyTransform(file, opts) {
+        // Do a negative look-ahead to exclude matches that contain `vialer-js/src`.
+        const aliasMatch = /(require\('vialer-js)(?!.*src)./g
+        return through(function(buf, enc, next) {
+            this.push(buf.toString('utf8').replace(aliasMatch, 'require(\'vialer-js/src/js/'))
+            next()
+        })
+    }
+
+
     compileTemplates(sources) {
         return gulp.src(sources)
             .pipe(fuet({
@@ -242,15 +261,17 @@ class Helpers {
     */
     jsEntry(entryPoint, bundleName, entries = []) {
         const brand = this.settings.brands[this.settings.BRAND_TARGET]
-
         return new Promise((resolve) => {
             if (!BUNDLERS[bundleName]) {
                 BUNDLERS[bundleName] = browserify({
+                    basedir: path.join(this.settings.BASE_DIR),
                     cache: {},
                     debug: !this.settings.PRODUCTION,
                     entries: entryPoint,
                     packageCache: {},
-                    paths: ['../node_modules', '../src/js/'],
+                    paths: [
+                        path.join(this.settings.ROOT_DIR, '../'),
+                    ],
                 })
                 if (this.settings.LIVERELOAD) BUNDLERS[bundleName].plugin(watchify)
                 for (let entry of entries) BUNDLERS[bundleName].add(entry)
@@ -264,6 +285,8 @@ class Helpers {
             if (bundleName === 'webview') {
                 BUNDLERS[bundleName].ignore('webextension-polyfill')
             }
+
+            BUNDLERS[bundleName].transform({global: true}, this.browserifyTransform)
 
             BUNDLERS[bundleName].bundle()
                 .on('error', notify.onError('Error: <%= error.message %>'))
@@ -324,11 +347,11 @@ class Helpers {
                 // Builtin modules use special markers.
                 if (['bg', 'i18n'].includes(appSection)) {
                     if (sectionModule.adapter) {
-                        gutil.log(`[${appSection}] adapter ${moduleName} (${sectionModule.adapter})`)
+                        gutil.log(`[${appSection}] adapter plugin ${moduleName} (${sectionModule.adapter})`)
                         requires.push(`${sectionModule.adapter}/src/js/${appSection}`)
                     } else if (sectionModule.providers) {
                         for (const provider of sectionModule.providers) {
-                            gutil.log(`[${appSection}] provider ${moduleName} (${provider})`)
+                            gutil.log(`[${appSection}] provider plugin ${moduleName} (${provider})`)
                             requires.push(`${provider}/src/js/${appSection}`)
                         }
                     }
@@ -336,11 +359,11 @@ class Helpers {
 
                 if (sectionModule.addons) {
                     for (const addon of sectionModule.addons[appSection]) {
-                        gutil.log(`[${appSection}] addon ${moduleName} (${addon})`)
+                        gutil.log(`[${appSection}] addon plugin ${moduleName} (${addon})`)
                         requires.push(`${addon}/src/js/${appSection}`)
                     }
                 } else if (sectionModule.name) {
-                    gutil.log(`[${appSection}] custom module ${moduleName} (${sectionModule.name})`)
+                    gutil.log(`[${appSection}] custom plugin ${moduleName} (${sectionModule.name})`)
                     // A custom module is limited to a bg or fg section.
                     if (sectionModule.parts.includes(appSection)) {
                         requires.push(`${sectionModule.name}/src/js/${appSection}`)
@@ -349,28 +372,19 @@ class Helpers {
             }
 
             const b = browserify({
-                basedir: path.join(__dirname, '..'),
+                basedir: this.settings.BASE_DIR,
                 debug: true,
                 detectGlobals: false,
-                // Allows Browserify to resolve vialer-js project root require.
-                paths: ['../'],
+                paths: [
+                    // Allows Browserify to resolve vialer-js project root require.
+                    path.join(this.settings.ROOT_DIR, '../'),
+                ],
             })
 
 
             for (const _require of requires) b.require(_require)
 
-            // Rewrite requires in modules from something like 'vialer-js/bg/modules/user/adapter`
-            // to `vialer-js/src/js/bg/modules/user/adapter`. Within the node runtime,
-            // the same kind of aliasing is applied with module-alias. See package.json
-            // for the alias definition.
-            const aliasMatch = /require\('vialer-js\//g
-            b.transform({global: true}, function(file, opts) {
-                return through(function(buf, enc, next) {
-                    this.push(buf.toString('utf8').replace(aliasMatch, 'require(\'vialer-js/src/js/'))
-                    next()
-                })
-            })
-
+            b.transform({global: true}, this.browserifyTransform)
             b.bundle()
                 .on('error', notify.onError('Error: <%= error.message %>'))
                 .on('end', () => {resolve()})
@@ -396,12 +410,16 @@ class Helpers {
         const brandColors = this.formatScssVars(this.settings.brands[this.settings.BRAND_TARGET].colors)
         let includePaths = [
             this.settings.NODE_PATH,
-            path.join(this.settings.SRC_DIR, 'scss'),
+            // Use the root dir here, because we want to expose the
+            // vialer-js directory for imports; also for the docs build.
+            path.join(this.settings.ROOT_DIR, 'src', 'scss'),
         ]
         const name = path.basename(entryPath, '.scss')
 
         let sources = [entryPath]
-        if (entryExtra.length) sources = sources.concat(entryExtra)
+        if (entryExtra.length) {
+            sources = sources.concat(entryExtra)
+        }
 
         return gulp.src(sources)
             .pipe(insert.prepend(brandColors))
@@ -443,19 +461,24 @@ class Helpers {
 
 
     /**
-    * Start a development server that serves docs
-    * and the build directory.
+    * Start a development server that serves docs and the build directory.
     * @param {Number} [port] - Port to listen on for the HTTP server.
+    * @param {Array} [extraMounts] - Extra mountpoints to add.
     */
-    startDevServer(port = 8999) {
+    startDevService(port = 8999, extraMounts = []) {
         this.settings.LIVERELOAD = true
         const app = connect()
         livereload.listen({silent: false})
         app.use(serveStatic(this.settings.BUILD_ROOT))
-        app.use('/', serveIndex(this.settings.BUILD_ROOT, {icons: false}))
-        app.use(mount('/docs', serveStatic(path.join(__dirname, 'build', 'docs'))))
+        app.use(mount('/', serveIndex(this.settings.BUILD_DIR, {icons: true})))
+        app.use(mount('/', serveStatic(this.settings.BUILD_DIR)))
+
+        for (const mountpoint of extraMounts) {
+            app.use(mount(mountpoint.mount, serveStatic(mountpoint.dir)))
+            gutil.log(`Development service mounted ${mountpoint.dir} on ${mountpoint.mount} (index: ${mountpoint.index ? 'yes' : 'no'})`)
+        }
         http.createServer(app).listen(port)
-        gutil.log(`local develop server running at http://localhost:${port}`)
+        gutil.log(`Development service listening on http://localhost:${port}`)
     }
 }
 

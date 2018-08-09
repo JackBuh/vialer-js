@@ -7,7 +7,7 @@ const rc = require('rc')
 
 
 // The main settings object containing info from .vialer-jsrc and build flags.
-module.exports = function(baseDir) {
+module.exports = function(baseDir, overrides) {
     // Define all static or simple condition settings here.
     let settings = {
         BASE_DIR: baseDir,
@@ -27,10 +27,11 @@ module.exports = function(baseDir) {
         VERBOSE: argv.verbose ? true : false,
     }
 
+    Object.assign(settings, overrides)
+
     settings.BRAND_TARGET = argv.brand ? argv.brand : process.env.BRAND ? process.env.BRAND : 'bologna'
     settings.NODE_PATH = path.join(settings.ROOT_DIR, 'node_modules') || process.env.NODE_PATH
     settings.PACKAGE = require(`${settings.ROOT_DIR}/package`)
-    settings.SRC_DIR = path.join(settings.ROOT_DIR, 'src')
     settings.VERSION = argv.version ? argv.version : settings.PACKAGE.version
 
     settings.BUILD_ROOT = path.join(settings.ROOT_DIR, 'build')

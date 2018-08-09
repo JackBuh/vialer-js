@@ -7,6 +7,8 @@ const App = require('../lib/app')
 const Crypto = require('./lib/crypto')
 const Devices = require('./lib/devices')
 const Store = require('./lib/store')
+const Media = require('../lib/media')
+const Sounds = require('../lib/sounds')
 const Telemetry = require('./lib/telemetry')
 
 const Timer = require('./lib/timer')
@@ -80,31 +82,14 @@ class AppBackground extends App {
 
 
     async __init() {
-
-        if (this.env.isBrowser) {
-            // Create audio/video elements in a browser-like environment.
-            // The audio element is used to playback sounds with
-            // (like ringtones, dtmftones). The video element is
-            // used to attach the remote WebRTC stream to.
-            this.localVideo = document.createElement('video')
-            this.localVideo.setAttribute('id', 'local')
-            this.localVideo.muted = true
-
-            this.remoteVideo = document.createElement('video')
-            this.remoteVideo.setAttribute('id', 'remote')
-            document.body.prepend(this.localVideo)
-            document.body.prepend(this.remoteVideo)
-
-            // Trigger play automatically. This is required for any audio
-            // to play during a call.
-            this.remoteVideo.addEventListener('canplay', () => this.remoteVideo.play())
-            this.localVideo.addEventListener('canplay', () => this.localVideo.play())
-        }
-
-        this.__loadModules(this._modules)
+        this.__loadPlugins(this._modules)
 
         this.api = new Api(this)
+        this.media = new Media(this)
+
         await this.__initStore()
+
+        this.sounds = new Sounds(this)
         this.telemetry = new Telemetry(this)
         // Clear all state if the schema changed after a plugin update.
         // This is done here because of translations, which are only available

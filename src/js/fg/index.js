@@ -4,7 +4,8 @@
 */
 const App = require('../lib/app')
 const env = require('../lib/env')({role: 'fg'})
-
+const Media = require('../lib/media')
+const Sounds = require('../lib/sounds')
 
 /**
 * Reactive HTML User Interface that interacts with
@@ -59,7 +60,7 @@ class AppForeground extends App {
             Wizard: require('../../components/wizard'),
         }
 
-        this.__loadModules(opts.modules)
+        this.__loadPlugins(opts.modules)
 
         for (const name of Object.keys(this.components)) {
             Vue.component(name, this.components[name](this))
@@ -87,6 +88,9 @@ class AppForeground extends App {
                 this.state.env = this.env
 
                 await this.__initViewModel()
+                this.media = new Media(this)
+
+                this.sounds = new Sounds(this)
                 this.vm.$mount(document.querySelector('#app-placeholder'))
                 this.setState({ui: {visible: true}})
                 if (this.env.isExtension) {

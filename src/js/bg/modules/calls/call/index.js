@@ -135,7 +135,7 @@ class Call {
             else outputSink = devices.sinks.headsetOutput.id
 
             this.app.logger.info(`${this}call video element on sink ${outputSink}`)
-            await this.app.remoteVideo.setSinkId(outputSink)
+            await this.app.media.remoteVideo.setSinkId(outputSink)
         } catch (err) {
             const message = this.app.$t('failed to set input or output device.')
             this.app.notify({icon: 'warning', message, type: 'danger'})

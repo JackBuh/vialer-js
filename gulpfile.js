@@ -29,10 +29,12 @@ const tape = require('gulp-tape')
 const template = require('gulp-template')
 const test = require('tape')
 
+
 const writeFileAsync = promisify(fs.writeFile)
 
 // The main settings object containing info from .vialer-jsrc and build flags.
 let settings = require('./tools/settings')(__dirname)
+
 
 // Initialize the helpers, which make this file less dense.
 const helpers = new Helpers(settings)
@@ -131,7 +133,7 @@ gulp.task('build-run', 'Generate an unoptimized build and run it in the target e
         const electronPath = './node_modules/electron/dist/electron'
         command = `${command};${electronPath} --js-flags='--harmony-async-await' ${buildDir}/main.js`
     } else if (settings.BUILD_TARGET === 'webview') {
-        helpers.startDevServer()
+        helpers.startDevService()
         const urlTarget = `http://localhost:8999/${settings.BRAND_TARGET}/webview/index.html`
         command = `${command};chromium --disable-web-security --new-window ${urlTarget}`
     }
@@ -270,8 +272,6 @@ gulp.task('manifest', 'Generate a browser-specific manifest file.', async() => {
 
 gulp.task('scss', 'Generate all CSS files.', [], (done) => {
     runSequence(['scss-app', 'scss-observer'], () => {
-        // Targetting webext.css for livereload changed only works in the
-        // webview.
         if (settings.LIVERELOAD) livereload.changed('app.css')
         done()
     })
@@ -368,7 +368,7 @@ gulp.task('test-unit', 'Run unit and integation tests.', function() {
 
 
 gulp.task('test-browser', 'Run browser tests on a served webview.', ['build'], function() {
-    if (!settings.LIVERELOAD) helpers.startDevServer()
+    if (!settings.LIVERELOAD) helpers.startDevService()
 
     return gulp.src('test/browser/**/*.js')
         .pipe(tape({
@@ -394,7 +394,7 @@ gulp.task('i18n', 'Generate i18n translations.', (done) => {
 
 
 gulp.task('watch', 'Run developer watch modus.', () => {
-    helpers.startDevServer()
+    helpers.startDevService()
 
     if (settings.BUILD_TARGET === 'electron') {
         gulp.watch([path.join(settings.SRC_DIR, 'js', 'main.js')], ['js-electron'])

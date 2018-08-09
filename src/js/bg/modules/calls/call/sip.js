@@ -114,9 +114,9 @@ class CallSIP extends Call {
 
             this.pc = this.session.sessionDescriptionHandler.peerConnection
             this.pc.getReceivers().forEach((receiver) => this.remoteStream.addTrack(receiver.track))
-            this.app.remoteVideo.srcObject = this.remoteStream
+            this.app.media.remoteVideo.srcObject = this.remoteStream
             this.pc.getSenders().forEach((sender) => this.localStream.addTrack(sender.track))
-            this.app.localVideo.srcObject = this.localStream
+            this.app.media.localVideo.srcObject = this.localStream
         })
 
         /**
@@ -180,10 +180,10 @@ class CallSIP extends Call {
 
             this.pc = this.session.sessionDescriptionHandler.peerConnection
             this.pc.getReceivers().forEach((receiver) => this.remoteStream.addTrack(receiver.track))
-            this.app.remoteVideo.srcObject = this.remoteStream
+            this.app.media.remoteVideo.srcObject = this.remoteStream
 
             this.pc.getSenders().forEach((sender) => this.localStream.addTrack(sender.track))
-            this.app.localVideo.srcObject = this.localStream
+            this.app.media.localVideo.srcObject = this.localStream
         })
         this.session.accept({
             sessionDescriptionHandlerOptions: {

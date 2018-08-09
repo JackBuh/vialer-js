@@ -1,0 +1,16 @@
+@import "vialer-js/lib/variables";
+
+.component-sidebar {
+    background: $grey-color-lightest;
+    display: flex;
+    flex-direction: column;
+
+    header {
+        background: $brand-accent-color;
+        height: 200px;
+    }
+
+    nav {
+
+    }
+}

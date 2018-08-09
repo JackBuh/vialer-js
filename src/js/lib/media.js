@@ -12,6 +12,26 @@ class Media {
 
     constructor(app) {
         this.app = app
+
+        if (this.app.env.isBrowser) {
+            // Create audio/video elements in a browser-like environment.
+            // The audio element is used to playback sounds with
+            // (like ringtones, dtmftones). The video element is
+            // used to attach the remote WebRTC stream to.
+            this.localVideo = document.createElement('video')
+            this.localVideo.setAttribute('id', 'local')
+            this.localVideo.muted = true
+
+            this.remoteVideo = document.createElement('video')
+            this.remoteVideo.setAttribute('id', 'remote')
+            document.body.prepend(this.localVideo)
+            document.body.prepend(this.remoteVideo)
+
+            // Trigger play automatically. This is required for any audio
+            // to play during a call.
+            this.remoteVideo.addEventListener('canplay', () => this.remoteVideo.play())
+            this.localVideo.addEventListener('canplay', () => this.localVideo.play())
+        }
     }
 
 

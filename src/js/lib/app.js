@@ -1,8 +1,5 @@
 require('module-alias/register')
-
-const Media = require('./media')
 const Skeleton = require('./skeleton')
-const Sounds = require('./sounds')
 
 
 /**
@@ -28,7 +25,6 @@ class App extends Skeleton {
         this.filters = require('./filters')(this)
         this.helpers = require('./helpers')(this)
 
-        this.media = new Media(this)
         // Contains all registered App modules.
         this.modules = {}
         this._modules = options.modules
@@ -94,47 +90,47 @@ class App extends Skeleton {
     async __initViewModel() {
         this.logger.info(`${this}init viewmodel...`)
         const i18nStore = new I18nStore(this.state)
-        Vue.use(i18n, i18nStore)
+        Vue.use(I18nStash, i18nStore)
 
         for (const [id, translation] of Object.entries(this.i18n.translations)) {
             Vue.i18n.add(id, translation)
         }
 
-        let selectedLanguage = this.state.settings.language.selected.id
+        if (!this.state.settings) {
+            Vue.i18n.set('en')
+        } else {
+            let selectedLanguage = this.state.settings.language.selected.id
 
-        if (!selectedLanguage) {
-            let newLanguage
-            if (this.env.isBrowser) {
-                // Try to figure out the language from the environment.
-                // Check only the first part of en-GB/en-US.
-                newLanguage = this.state.settings.language.options.find((i) => i.id === navigator.language.split('-')[0])
-                if (newLanguage) {
+            if (!selectedLanguage) {
+                let newLanguage
+                if (this.env.isBrowser) {
+                    // Try to figure out the language from the environment.
+                    // Check only the first part of en-GB/en-US.
+                    newLanguage = this.state.settings.language.options.find((i) => i.id === navigator.language.split('-')[0])
+                    if (newLanguage) {
+                        selectedLanguage = newLanguage.id
+                        this.setState({settings: {language: {selected: newLanguage}}})
+                    }
+                }
+
+                // Fallback to English language as a last resort.
+                if (!newLanguage) {
+                    newLanguage = this.state.settings.language.options[0]
                     selectedLanguage = newLanguage.id
                     this.setState({settings: {language: {selected: newLanguage}}})
                 }
             }
 
-            // Fallback to English language as a last resort.
-            if (!newLanguage) {
-                newLanguage = this.state.settings.language.options[0]
-                selectedLanguage = newLanguage.id
-                this.setState({settings: {language: {selected: newLanguage}}})
-            }
+            this.logger.info(`${this}selected language: ${selectedLanguage}`)
+            Vue.i18n.set(selectedLanguage)
+
+            // Add a shortcut to the translation module.
+            this.$t = Vue.i18n.translate
+            this.vm = new Vue({
+                data: {store: this.state},
+                render: h => h(require('../../components/main')(this)),
+            })
         }
-
-        this.logger.info(`${this}selected language: ${selectedLanguage}`)
-        Vue.i18n.set(selectedLanguage)
-
-        // Add a shortcut to the translation module.
-        this.$t = Vue.i18n.translate
-        this.vm = new Vue({
-            data: {store: this.state},
-            render: h => h(require('../../components/main')(this)),
-        })
-
-        // Sounds that are used in the application. Both
-        // initialized in `AppForeground` and `AppBackground`.
-        this.sounds = new Sounds(this)
     }
 
 
@@ -152,11 +148,11 @@ class App extends Skeleton {
     * Load section modules from browserified modules. This is basically
     * the browser-side of the `jsPlugins` browserify handler in
     * `tools/helpers.js`.
-    * @param {Object} moduleList - See .vialer-jsrc.example for the format.
+    * @param {Object} plugins - See .vialer-jsrc.example for the format.
     */
-    __loadModules(moduleList) {
+    __loadPlugins(plugins) {
         // Start by initializing builtin modules.
-        for (const builtin of moduleList.builtin) {
+        for (const builtin of plugins.builtin) {
             if (builtin.addons) {
                 const addonModules = builtin.addons[this._appSection].map((addon) => {
                     return require(`${addon}/src/js/${this._appSection}`)

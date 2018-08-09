@@ -74,8 +74,8 @@
         "gulp-template": "5.x.x",
         "gulp-uglify": "3.x.x",
         "jsdoc": "3.x.x",
-        "jsdoc-memberof-namespace": "2.x.x",
-        "jsdoc-rtd": "^1.0.15",
+        "jsdoc-spindle": "1.x.x",
+        "markdown-it": "8.4.2",
         "mkdirp": "0.x.x",
         "rc": "1.x.x",
         "run-sequence": "1.x.x",
@@ -87,7 +87,6 @@
         "uglify-es": "3.x.x",
         "vinyl-buffer": "1.x.x",
         "vinyl-source-stream": "1.x.x",
-        "vue-markdown": "^2.2.4",
         "vue-svgicon": "2.x.x",
         "watchify": "3.x.x",
         "yargs": "7.x.x"
