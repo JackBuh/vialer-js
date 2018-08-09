@@ -15,7 +15,7 @@ const Plugin = require('vialer-js/lib/plugin')
 * Main entrypoint for Contacts.
 * @memberof AppBackground.plugins
 */
-class ModuleContacts extends Plugin {
+class PluginContacts extends Plugin {
     /**
     * @param {AppBackground} app - The background application.
     * @param {Array} providers - ContactProvider classes used to sync Contacts with.
@@ -141,4 +141,4 @@ class ModuleContacts extends Plugin {
     }
 }
 
-module.exports = ModuleContacts
+module.exports = PluginContacts

@@ -12,7 +12,7 @@ const Plugin = require('vialer-js/lib/plugin')
 * Main entrypoint for Availability.
 * @memberof AppBackground.plugins
 */
-class ModuleAvailability extends Plugin {
+class PluginAvailability extends Plugin {
     /**
     * @param {AppBackground} app - The background application.
     * @param {Array} addons - List of AvailabilityAddon classes.
@@ -91,4 +91,4 @@ class ModuleAvailability extends Plugin {
     }
 }
 
-module.exports = ModuleAvailability
+module.exports = PluginAvailability

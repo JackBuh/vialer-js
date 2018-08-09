@@ -17,24 +17,28 @@ class AppDocs extends App {
 
         this.components = {
             Sidebar: require('../components/sidebar'),
+            ViewStory: require('../components/view_story'),
         }
+
+        this.router = new VueRouter({
+            base: '/',
+            linkActiveClass: 'is-active',
+            mode: 'hash',
+        })
+
+        this.__loadPlugins(this.__plugins)
 
         for (const name of Object.keys(this.components)) {
             Vue.component(name, this.components[name](this))
         }
 
-        this.__loadPlugins(this.__plugins)
         this.__initStore({
             stories: global.stories,
         })
         this.__initViewModel()
         this.vm.$mount(document.querySelector('#app-placeholder'))
 
-        this.router = new VueRouter({
-            base: '/',
-            linkActiveClass: 'is-active',
-            mode: 'history',
-        })
+
     }
 }
 

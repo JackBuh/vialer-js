@@ -13,7 +13,7 @@ const Tabs = require('./tabs')
 * Main entrypoint for Extension.
 * @memberof AppBackground.plugins
 */
-class ModuleExtension extends Plugin {
+class PluginExtension extends Plugin {
     /**
     * Add listeners for update/install actions and
     * setup keyboard events.
@@ -91,4 +91,4 @@ class ModuleExtension extends Plugin {
 
 }
 
-module.exports = ModuleExtension
+module.exports = PluginExtension

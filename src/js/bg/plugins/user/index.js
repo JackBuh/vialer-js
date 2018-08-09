@@ -12,7 +12,7 @@ const Plugin = require('vialer-js/lib/plugin')
 * Main entrypoint for User.
 * @memberof AppBackground.plugins
 */
-class ModuleUser extends Plugin {
+class PluginUser extends Plugin {
     /**
     * Setup events that can be called upon from `AppForeground`.
     * @param {AppBackground} app - The background application.
@@ -78,4 +78,4 @@ class ModuleUser extends Plugin {
     }
 }
 
-module.exports = ModuleUser
+module.exports = PluginUser

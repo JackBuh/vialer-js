@@ -1,12 +1,16 @@
 const Plugin = require('vialer-js/lib/plugin')
 
-class ModuleStories extends Plugin {
+class PluginStories extends Plugin {
 
     constructor(app) {
         super(app)
 
-        this._notifications = {}
-        console.log("MODULE LOADED")
+        app.router.addRoutes([{
+            alias: 'view_story',
+            component: app.components.ViewStory,
+            name: 'view_story',
+            path: '/stories/:story_id',
+        }])
     }
 
 
@@ -20,4 +24,4 @@ class ModuleStories extends Plugin {
 }
 
 
-module.exports = ModuleStories
+module.exports = PluginStories

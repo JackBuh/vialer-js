@@ -14,7 +14,7 @@ const MAX_ACTIVITIES = 20
 * Main entrypoint for Activity.
 * @memberof AppBackground.plugins
 */
-class ModuleActivity extends Plugin {
+class PluginActivity extends Plugin {
     /**
     * @param {AppBackground} app - The background application.
     */
@@ -115,4 +115,4 @@ class ModuleActivity extends Plugin {
     }
 }
 
-module.exports = ModuleActivity
+module.exports = PluginActivity

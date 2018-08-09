@@ -1,0 +1,36 @@
+@import "vialer-js/lib/variables";
+
+.component-view-story {
+    background: $grey-color-lightest;
+    display: flex;
+    flex-direction: column;
+
+    .sidebar-header {
+        background: $brand-accent-color;
+        height: 200px;
+    }
+
+    .sidebar-navigation {
+
+        header {
+            background: $brand-color;
+            color: $white-color;
+            font-weight: 500;
+            padding: $spacer;
+            text-transform: uppercase;
+        }
+
+        .sidebar-item {
+            color: $grey-color-darker;
+            font-weight: 500;
+            padding: $spacer;
+            text-transform: capitalize;
+            width: 100%;
+
+            &:hover {
+                background: $white-color;
+                cursor: pointer;
+            }
+        }
+    }
+}

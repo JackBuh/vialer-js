@@ -10,7 +10,7 @@ const Plugin = require('vialer-js/lib/plugin')
 * Main entrypoint for Settings.
 * @memberof AppBackground.plugins
 */
-class ModuleSettings extends Plugin {
+class PluginSettings extends Plugin {
     /**
     * Initializes the module's store.
     * All application runtime settings are defined here. Build-time
@@ -246,4 +246,4 @@ class ModuleSettings extends Plugin {
     }
 }
 
-module.exports = ModuleSettings
+module.exports = PluginSettings

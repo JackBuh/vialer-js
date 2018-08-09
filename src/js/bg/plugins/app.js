@@ -12,7 +12,7 @@ const Plugin = require('vialer-js/lib/plugin')
 * @memberof AppBackground.plugins
 * @extends Plugin
 */
-class ModuleApp extends Plugin {
+class PluginApp extends Plugin {
     /**
     * @param {AppBackground} app - The background application.
     */
@@ -139,4 +139,4 @@ class ModuleApp extends Plugin {
     }
 }
 
-module.exports = ModuleApp
+module.exports = PluginApp

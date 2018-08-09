@@ -3,7 +3,7 @@
 * AppBackground and AppForeground to separate logical blocks
 * of functionality from each other and to keep everything clear.
 */
-class Module extends EventEmitter {
+class Plugin extends EventEmitter {
     /**
     * Base Module constructor.
     * @param {AppBackground} app - The background application.
@@ -14,4 +14,4 @@ class Module extends EventEmitter {
     }
 }
 
-module.exports = Module
+module.exports = Plugin

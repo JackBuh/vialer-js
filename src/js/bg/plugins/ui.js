@@ -11,7 +11,7 @@ const Plugin = require('vialer-js/lib/plugin')
 * Main entrypoint for UI.
 * @memberof AppBackground.plugins
 */
-class ModuleUI extends Plugin {
+class PluginUI extends Plugin {
     /**
     * Setup some menubar and click-to-dial icon related properties.
     * @param {AppBackground} app - The background application.
@@ -308,4 +308,4 @@ class ModuleUI extends Plugin {
 
 }
 
-module.exports = ModuleUI
+module.exports = PluginUI
