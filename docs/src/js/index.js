@@ -1,7 +1,8 @@
-const App = require('vialer-js/lib/app')
-require('vialer-js/i18n')
-
 require('module-alias/register')
+
+const App = require('vialer-js/lib/app')
+require('./i18n')
+
 /**
 * A minimal Vue-powered documentation website, reusing as much
 * as possible from the Vialer-js source. Reason for building
@@ -14,10 +15,6 @@ class AppDocs extends App {
     constructor(options) {
         super(options)
 
-        this.vm = new Vue({
-            data: {store: this.state},
-            render: h => h(require('../components/main')(this)),
-        })
 
         this.components = {
             Sidebar: require('../components/sidebar'),
@@ -29,6 +26,12 @@ class AppDocs extends App {
 
         this.__initStore()
         this.__initViewModel()
+
+    }
+
+
+    async __initViewModel() {
+        await super.__initViewModel()
         this.vm.$mount(document.querySelector('#app-placeholder'))
     }
 }

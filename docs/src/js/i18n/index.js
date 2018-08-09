@@ -1,4 +1,4 @@
-const I18n = require('../lib/i18n')
+const I18n = require('vialer-js/lib/i18n')
 
 /**
 * Process all translations from Vialer-js and its modules.

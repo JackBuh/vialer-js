@@ -88,7 +88,7 @@ class App extends Skeleton {
     * @param {Object} watchers - Store properties to watch for changes.
     */
     async __initViewModel() {
-        this.logger.info(`${this}init viewmodel...`)
+        this.logger.info(`${this}init viewmodel`)
         const i18nStore = new I18nStore(this.state)
         Vue.use(I18nStash, i18nStore)
 
@@ -123,14 +123,14 @@ class App extends Skeleton {
 
             this.logger.info(`${this}selected language: ${selectedLanguage}`)
             Vue.i18n.set(selectedLanguage)
-
-            // Add a shortcut to the translation module.
-            this.$t = Vue.i18n.translate
-            this.vm = new Vue({
-                data: {store: this.state},
-                render: h => h(require('../../components/main')(this)),
-            })
         }
+
+        // Add a shortcut to the translation module.
+        this.$t = Vue.i18n.translate
+        this.vm = new Vue({
+            data: {store: this.state},
+            render: h => h(require('../../components/main')(this)),
+        })
     }
 
 

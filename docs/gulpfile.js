@@ -109,6 +109,8 @@ gulp.task('watch', 'Run developer watch modus.', () => {
     ], ['scss-app'])
 
     gulp.watch([
+        // Also watch for changes from Vialer-js App framework.
+        path.join(settings.ROOT_DIR, 'src', 'js', '**', '*.js'),
         path.join(settings.SRC_DIR, 'components', '**', '*.js'),
         path.join(settings.SRC_DIR, 'js', '**', '*.js'),
         `!${path.join(settings.SRC_DIR, 'js', 'vendor.js')}`,
