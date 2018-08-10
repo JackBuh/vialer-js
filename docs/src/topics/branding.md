@@ -1,7 +1,9 @@
+# Build a brand
+
 The following prerequisites apply when you want to release a branded version
 of Vialer-js:
 
-# Store accounts
+## Store accounts
 Accounts for the following vendor stores:
 * Google account for the [Chrome web store](https://chrome.google.com/webstore).
   A $5 developer fees need to be paid with a creditcard to enable publishing
@@ -9,7 +11,7 @@ Accounts for the following vendor stores:
 * Mozilla developer account for the [addons store](https://addons.mozilla.org).
 
 
-# Branding
+## Branding
 Please do not publish Vialer-js under a different name with the same branding
 as one of the existing brands. If you want to create your own brand, come up with
 a branding name for your plugin and create branded versions of the following images:
@@ -39,7 +41,7 @@ a branding name for your plugin and create branded versions of the following ima
 * A branded portal URL for the VoIPGRID API.
 
 
-# Manual deployment
+## Manual deployment
 * Add your brand, e.g. `yourbrand` in the `brands` section of .vialer-jsrc by copying the `bologna` brand.
 * Modify the color palette of `yourbrand` to match your brand's color-scheme.
 * Copy the `src/brand/vialer` directory and its content to `src/brand/yourbrand`. Make sure the name matches the key you
@@ -51,10 +53,3 @@ gulp build --brand yourbrand --target chrome
 gulp build --brand yourbrand --target firefox
 gulp build --brand yourbrand --target electron
 ```
-
-# Auto-deploy with Vialer-js releases
-Please [contact us](http://voipgrid.nl/contact/) if you would like a branded plugin that is
-going to be deployed together with the Vialer-js release cycle. We need the following
-information to be able to deploy your brand:
-* Deployment credentials for the [Chrome web store](https://chrome.google.com/webstore/developer/dashboard). See the `Preparation` section of {@tutorial deployment}.
-* Your [Mozilla store](https://addons.mozilla.org/developers/addons) addon should have our developers included as collaborators.

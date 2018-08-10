@@ -1,15 +1,17 @@
 <component class="component-sidebar">
-    <header class="sidebar-header">
-        <div class="title">
-
-        </div>
-    </header>
-    <nav class="sidebar-navigation">
-        <header>Topics</header>
-        <div class="sidebar-item" v-for="(story, name) in stories">
-            <router-link class="level-up" :to="{name: 'view_story', params: {story_id: name}}">
-                <i class="item-icon fa fa-level-up fa-flip-horizontal"></i>
+    <header class="header">
+        <div class="header-logo">
+            <router-link to="/">
+                <img src="/img/logo-128.png"/>
             </router-link>
         </div>
+        <div class="header-title">{{vendor.name}}</div>
+        <div class="header-version">{{version.current}}</div>
+    </header>
+    <nav class="navigation">
+        <div class="navigation-header">Topics</div>
+        <router-link class="navigation-link" :to="{name: 'view_topic', params: {topic_id: topic.name}}" v-for="(topic, name) in topics">
+            {{topic.title}}
+        </router-link>
     </nav>
 </component>

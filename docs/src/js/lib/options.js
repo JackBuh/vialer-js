@@ -5,7 +5,7 @@ module.exports = (function() {
         env,
         plugins: {
             builtin: [
-                {module: require('../plugins/stories'), name: 'stories'},
+                {module: require('../plugins/page'), name: 'page'},
             ],
             custom: [],
         },

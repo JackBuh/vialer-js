@@ -1,0 +1,20 @@
+{
+    "topics": [
+        {
+            "name": "install",
+            "title": "Installation"
+        },
+        {
+            "name": "development",
+            "title": "Development"
+        },
+        {
+            "name": "branding",
+            "title": "Build a brand"
+        },
+        {
+            "name": "releases",
+            "title": "Release info"
+        }
+    ]
+}

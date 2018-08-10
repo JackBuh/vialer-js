@@ -5,13 +5,15 @@
     height: 100%;
     width: 100%;
 
-    .app-view-sidebar {
 
+    .app-view-sidebar {
         width: 300px;
     }
 
     .app-view-main {
-
+        background: $white-tint-color-light;
         flex: 1;
+        height: 100vh;
+        overflow: auto;
     }
 }

@@ -8,37 +8,57 @@ require('./i18n')
 * as possible from the Vialer-js source. Reason for building
 * is that we want branded documentation, and a higher degree
 * of control over how the documentation looks and is being
-* generated.
+* generated. It is also a good testingground to optimize
+* the App & Skeleton abstraction.
 */
 class AppDocs extends App {
 
     constructor(options) {
         super(options)
 
-        this.components = {
+        const components = {
             Sidebar: require('../components/sidebar'),
-            ViewStory: require('../components/view_story'),
+            ViewPage: require('../components/view_page'),
         }
 
-        this.router = new VueRouter({
-            base: '/',
-            linkActiveClass: 'is-active',
-            mode: 'hash',
-        })
+        this.components = {}
 
-        this.__loadPlugins(this.__plugins)
-
-        for (const name of Object.keys(this.components)) {
-            Vue.component(name, this.components[name](this))
+        for (const name of Object.keys(components)) {
+            this.components[name] = Vue.component(name, components[name](this))
         }
 
         this.__initStore({
-            stories: global.stories,
+            pages: global.pages,
+            vendor: {
+                name: process.env.VENDOR_NAME,
+            },
+            version: {
+                current: process.env.VERSION,
+            },
         })
-        this.__initViewModel()
-        this.vm.$mount(document.querySelector('#app-placeholder'))
+
+        this.router = this.setupRouter()
+        this.__loadPlugins(this.__plugins)
+
+        this.__initViewModel({
+            main: require('../components/main')(this),
+            settings: {router: this.router},
+        })
+
+        this.vm.$mount('#app')
+    }
 
 
+    setupRouter() {
+        Vue.use(VueRouter)
+
+        const router = new VueRouter({
+            base: '/',
+            linkActiveClass: 'is-active',
+            mode: 'history',
+        })
+
+        return router
     }
 }
 

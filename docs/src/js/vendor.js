@@ -1,5 +1,5 @@
 require('vialer-js/lib/vendor')
 
-global.VueRouter = require('vue-router')
-Vue.use(VueRouter)
+global.hljs = require('highlight.js')
 global.MarkdownIt = require('markdown-it')
+global.VueRouter = require('vue-router')

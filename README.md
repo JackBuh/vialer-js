@@ -1,13 +1,12 @@
 [![CircleCI](https://circleci.com/gh/vialer/vialer-js/tree/develop.svg?style=svg)](https://circleci.com/gh/vialer/vialer-js/tree/develop)
 
-# Quickstart
-## Requirements
+## Getting started
+### Requirements
 * Node.js 10.0.0 or higher
 * Npm 6 or higher
-* Electron executable for the desktop version (optional)
 
 
-## Setup
+### Setup
 Checkout the project and install the dependencies from npm:
 ```bash
 git clone git@github.com:VoIPGRID/vialer-js.git
@@ -25,7 +24,7 @@ as a Chrome WebExtension! Checkout {@tutorial install} to
 learn more about different builds.
 
 
-# About Vialer-js
+## About Vialer-js
 Vialer-js is a free and open-source communication platform.
 It's purpose is to be an attractive unified communication tool to end-users,
 who value cross-platform user- and privacy-friendly features, like being able

@@ -187,21 +187,21 @@ class AppBackground extends App {
             app: {vault: {unlocked: false}},
             ui: {menubar: {base: 'inactive', event: null}},
         })
-
+        const MainComponent = require('../../components/main')(this)
         if (this.state.app.vault.key) {
             this.logger.info(`${this}continuing existing session '${this.state.user.username}'...`)
             await this.__initSession({key: this.state.app.vault.key})
             // The API username and token are now available in the store.
             this.api.setupClient(this.state.user.username, this.state.user.token)
             // (!) State is reactive after initializing the view-model.
-            await this.__initViewModel()
+            this.__initViewModel({main: MainComponent})
             this.__storeWatchers(true)
             if (this.state.app.online) {
                 this.__initServices(true)
             }
         } else {
             // No session yet.
-            await this.__initViewModel()
+            this.__initViewModel({main: MainComponent})
         }
 
         this.devices = new Devices(this)

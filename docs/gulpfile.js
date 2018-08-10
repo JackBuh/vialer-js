@@ -1,17 +1,19 @@
+const {_extend} = require('util')
 const fs = require('fs').promises
-const util = require('util')
 
 const childExec = require('child_process').exec
 const path = require('path')
 
+const addsrc = require('gulp-add-src')
 const flatten = require('gulp-flatten')
 const ghPages = require('gulp-gh-pages')
-const glob = util.promisify(require('glob'))
 const gulp = require('gulp-help')(require('gulp'), {})
 const gutil = require('gulp-util')
 const ifElse = require('gulp-if-else')
+const imagemin = require('gulp-imagemin')
 const livereload = require('gulp-livereload')
 const runSequence = require('run-sequence')
+const size = require('gulp-size')
 const template = require('gulp-template')
 
 const Helpers = require('../tools/helpers')
@@ -24,17 +26,33 @@ let settings = require('../tools/settings')(__dirname, {
 const helpers = new Helpers(settings)
 
 
+gulp.task('assets', 'Copy <brand> assets to <target>.', () => {
+    const robotoPath = path.join(settings.NODE_PATH, 'roboto-fontface', 'fonts', 'roboto')
+    return gulp.src(path.join(robotoPath, '{Roboto-Light.woff2,Roboto-Regular.woff2,Roboto-Medium.woff2}'))
+        .pipe(flatten({newPath: './fonts'}))
+        .pipe(addsrc(
+            path.join(settings.ROOT_DIR, 'src', 'brand', settings.BRAND_TARGET, 'img', '{*.icns,*.png,*.jpg,*.gif}'),
+            {base: path.join(settings.ROOT_DIR, 'src', 'brand', settings.BRAND_TARGET)},
+        ))
+        .pipe(ifElse(settings.PRODUCTION, imagemin))
+        .pipe(gulp.dest(path.join(settings.BUILD_DIR)))
+        .pipe(size(_extend({title: 'assets'}, settings.SIZE_OPTIONS)))
+        .pipe(ifElse(settings.LIVERELOAD, livereload))
+})
+
+
 gulp.task('build', 'Generate documentation website.', (done) => {
     runSequence([
         // 'code',
+        'assets',
         'html',
         'js-app',
         'js-vendor',
         // 'screenshots',
         'scss-app',
         'scss-vendor',
-        'stories',
         'templates',
+        'pages',
     ], () => {done()})
 })
 
@@ -45,7 +63,7 @@ gulp.task('code', 'Generate code documentation as JSON.', (done) => {
     childExec(command, undefined, (err, stdout, stderr) => {
         if (stderr) gutil.log(stderr)
         if (stdout) gutil.log(stdout)
-        if (settings.LIVERELOAD) livereload.changed('rtd.js')
+        if (settings.LIVERELOAD) livereload.changed('code.js')
         done()
     })
 })
@@ -88,18 +106,28 @@ gulp.task('screenshots', 'Generate userstory screenshots.', (done) => {
 })
 
 
-gulp.task('stories', 'Generate story JSON.', async(done) => {
-    const filenames = await glob('src/stories/*.md')
+gulp.task('pages', 'Generate topics JSON.', async(done) => {
+    const description = JSON.parse((await fs.readFile('src/topics/topics.json')))
+    const readme = (await fs.readFile(path.join(settings.ROOT_DIR, 'README.md'))).toString('utf8')
 
-    let files = await Promise.all(filenames.map((filename) => fs.readFile(filename)))
-    let stories = {}
-    for (const [i, file] of files.entries()) {
-        const name = path.basename(filenames[i], '.md')
-        stories[name] = file.toString('utf8')
+    let files = await Promise.all(
+        description.topics.map((topic) => fs.readFile(`src/topics/${topic.name}.md`))
+    )
+    let data = {
+        readme,
+        topics: [],
     }
 
-    let storyString = `window.stories = ${JSON.stringify(stories)}`
-    fs.writeFile(path.join(settings.BUILD_DIR, 'js', 'stories.js'), storyString)
+    for (const [i, file] of files.entries()) {
+        data.topics.push({
+            content: file.toString('utf8'),
+            name: description.topics[i].name,
+            title: description.topics[i].title,
+        })
+    }
+
+    fs.writeFile(path.join(settings.BUILD_DIR, 'js', 'pages.js'), `window.pages = ${JSON.stringify(data)}`)
+    if (settings.LIVERELOAD) livereload.changed('pages.js')
 })
 
 
@@ -110,7 +138,8 @@ gulp.task('scss-app', 'Generate documentation CSS.', (done) => {
 
 
 gulp.task('scss-vendor', 'Generate vendor CSS.', () => {
-    return helpers.scssEntry('./src/scss/vendor.scss', false)
+    const entryExtra = [path.join(settings.NODE_PATH, 'highlight.js', 'styles', 'monokai.css')]
+    return helpers.scssEntry('./src/scss/vendor.scss', !settings.PRODUCTION, entryExtra)
 })
 
 
@@ -136,7 +165,13 @@ gulp.task('watch', 'Run developer watch modus.', () => {
         `!${path.join(settings.SRC_DIR, 'js', 'vendor.js')}`,
     ], ['js-app'])
 
+
     gulp.watch([path.join(settings.SRC_DIR, 'js', 'vendor.js')], ['js-vendor'])
     gulp.watch(path.join(settings.SRC_DIR, 'scss', 'vendor.scss'), ['scss-vendor'])
+    gulp.watch([
+        path.join(settings.ROOT_DIR, 'README.md'),
+        path.join(settings.SRC_DIR, 'topics', 'topics.json'),
+        path.join(settings.SRC_DIR, 'topics', '*.md'),
+    ], ['pages'])
     gulp.watch([path.join(settings.SRC_DIR, 'components', '**', '*.vue')], ['templates'])
 })

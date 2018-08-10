@@ -84,9 +84,11 @@ class App extends Skeleton {
     * to the store. Translations can be dynamically added. Then initialize Vue
     * with the Vue-stash store, the root rendering component and gathered
     * watchers from modules.
-    * @param {Object} watchers - Store properties to watch for changes.
+    * @param {Object} options - Options to pass to Vue.
+    * @param {Object} options.main - Main component to initialize with.
+    * @param {Object} options.settings - Extra settings passed to Vue.
     */
-    async __initViewModel() {
+    __initViewModel({main, settings = {}} = {}) {
         this.logger.info(`${this}init viewmodel`)
         const i18nStore = new I18nStore(this.state)
         Vue.use(I18nStash, i18nStore)
@@ -126,10 +128,10 @@ class App extends Skeleton {
 
         // Add a shortcut to the translation module.
         this.$t = Vue.i18n.translate
-        this.vm = new Vue({
+        this.vm = new Vue(Object.assign({
             data: {store: this.state},
-            render: h => h(require('../../components/main')(this)),
-        })
+            render: h => h(main),
+        }, settings))
     }
 
 

@@ -465,13 +465,26 @@ class Helpers {
     * @param {Number} [port] - Port to listen on for the HTTP server.
     * @param {Array} [extraMounts] - Extra mountpoints to add.
     */
-    startDevService(port = 8999, extraMounts = []) {
+    startDevService({extraMounts = [], mode = 'spa', port = 8999} = {}) {
         this.settings.LIVERELOAD = true
         const app = connect()
         livereload.listen({silent: false})
-        app.use(serveStatic(this.settings.BUILD_ROOT))
-        app.use(mount('/', serveIndex(this.settings.BUILD_DIR, {icons: true})))
-        app.use(mount('/', serveStatic(this.settings.BUILD_DIR)))
+
+        const staticContent = serveStatic(this.settings.BUILD_DIR)
+
+        if (mode === 'spa') {
+            app.use((req, res, next) => {
+                if (['js', 'css', 'img'].includes(req.url.split('/')[1])) {
+                    staticContent(req, res)
+                } else {
+                    fs.createReadStream(path.join(this.settings.BUILD_DIR, 'index.html')).pipe(res)
+                }
+            })
+        } else {
+            app.use(mount('/', serveIndex(this.settings.BUILD_DIR, {icons: true})))
+            app.use(mount('/', serveStatic(this.settings.BUILD_DIR)))
+        }
+
 
         for (const mountpoint of extraMounts) {
             app.use(mount(mountpoint.mount, serveStatic(mountpoint.dir)))

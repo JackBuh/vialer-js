@@ -4,7 +4,9 @@ module.exports = (app) => {
         render: templates.sidebar.r,
         staticRenderFns: templates.sidebar.s,
         store: {
-            stories: 'stories',
+            topics: 'pages.topics',
+            vendor: 'vendor',
+            version: 'version',
         },
     }
 

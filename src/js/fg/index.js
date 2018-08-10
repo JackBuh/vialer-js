@@ -87,7 +87,9 @@ class AppForeground extends App {
                 // (!) Don't inherit the env of the background script.
                 this.state.env = this.env
 
-                await this.__initViewModel()
+                this.__initViewModel({
+                    main: require('../../components/main')(this),
+                })
                 this.media = new Media(this)
 
                 this.sounds = new Sounds(this)
