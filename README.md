@@ -9,7 +9,7 @@
 ### Setup
 Checkout the project and install the dependencies from npm:
 ```bash
-git clone git@github.com:VoIPGRID/vialer-js.git
+git clone git@github.com:vialer/vialer-js.git
 cd vialer-js
 npm i
 # Setup the default settings file:

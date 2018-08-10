@@ -5,11 +5,11 @@
                 <img src="/img/logo-128.png"/>
             </router-link>
         </div>
-        <div class="header-title">{{vendor.name}}</div>
-        <div class="header-version">{{version.current}}</div>
+        <div class="header-title">Vialer-js</div>
+        <div class="header-brand">{{vendor.name}} {{version.current}}</div>
     </header>
     <nav class="navigation">
-        <div class="navigation-header">Topics</div>
+        <div class="navigation-header">Developer topics</div>
         <router-link class="navigation-link" :to="{name: 'view_topic', params: {topic_id: topic.name}}" v-for="(topic, name) in topics">
             {{topic.title}}
         </router-link>
